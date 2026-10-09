@@ -21,7 +21,7 @@ const ACCENT_COUNT = 5;
  * Call this once per render, not once per row.
  */
 export function buildProjectAccents(projectNames: string[]): Map<string, string> {
-  const distinctSorted = [...new Set(projectNames)].sort((a, b) => a.localeCompare(b, "es"));
+  const distinctSorted = [...new Set(projectNames)].sort((a, b) => a.localeCompare(b, "en"));
 
   return new Map(
     distinctSorted.map((name, index) => [name, `proj-accent-${index % ACCENT_COUNT}`]),

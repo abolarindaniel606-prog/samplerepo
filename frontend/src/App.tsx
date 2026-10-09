@@ -40,6 +40,7 @@ import type {
 } from "./features/contracts/api";
 import { useContracts } from "./features/contracts/useContracts";
 import { LoginPage } from "./features/auth/LoginPage";
+import { HomePage } from "./features/home/HomePage";
 import { authApi } from "./features/auth/api";
 import { LotArchiveDialog } from "./features/lots/LotArchiveDialog";
 import { LotCreateDialog } from "./features/lots/LotCreateDialog";
@@ -96,27 +97,27 @@ import type { AreaUnit } from "./lib/area";
 import type { Contract, CustomerRecord, Lot, Project, Receipt, TabId, Transaction } from "./types";
 
 const pageTitles: Record<TabId, string> = {
-  dashboard: "Panel general",
-  lots: "Lotes",
-  projects: "Proyectos",
-  contracts: "Contratos",
-  customers: "Clientes",
-  receipts: "Recibos",
-  audit: "Historial",
-  permissions: "Permisos",
-  users: "Usuarios",
+  dashboard: "Dashboard",
+  lots: "Lots",
+  projects: "Projects",
+  contracts: "Contracts",
+  customers: "Customers",
+  receipts: "Receipts",
+  audit: "Activity history",
+  permissions: "Permissions",
+  users: "Users",
 };
 
 const primaryActionLabels: Record<TabId, string> = {
-  dashboard: "Nuevo contrato",
-  lots: "Nuevo lote",
-  projects: "Nuevo proyecto",
-  contracts: "Nuevo contrato",
-  customers: "Nuevo cliente",
-  receipts: "Nueva transacción",
-  audit: "Nuevo lote",
-  permissions: "Nuevo lote",
-  users: "Nueva cuenta",
+  dashboard: "New contract",
+  lots: "New lot",
+  projects: "New project",
+  contracts: "New contract",
+  customers: "New customer",
+  receipts: "New transaction",
+  audit: "New lot",
+  permissions: "New lot",
+  users: "New account",
 };
 
 /**
@@ -141,6 +142,7 @@ export default function App() {
   // On load, ask the server whether this browser already has a valid session
   // cookie. This is what keeps you signed in after a refresh.
   const [session, setSession] = useState<Session>({ status: "checking" });
+  const [showLogin, setShowLogin] = useState(false);
 
   /* Captured on the first render and never re-read: by the time the effect
      below runs, clearShareFromUrl has taken the marker back out of the URL. */
@@ -408,7 +410,7 @@ export default function App() {
      */
     if (!canRecordPayment) {
       setShareRefusal(
-        "Tu cuenta no puede registrar pagos. Pídele a quien sí pueda que registre el comprobante.",
+        "Your account cannot record payments. Ask someone with permission to record the receipt.",
       );
 
       if (request.kind === "payload") {
@@ -569,11 +571,18 @@ export default function App() {
   }, [isDraggingFiles]);
 
   if (session.status === "checking") {
-    return <div className="app-booting">Cargando…</div>;
+    return <div className="app-booting">Loading…</div>;
   }
 
   if (session.status === "anonymous") {
-    return <LoginPage onSignedIn={(user) => setSession({ status: "signed-in", user })} />;
+    return showLogin ? (
+      <LoginPage
+        onSignedIn={(user) => setSession({ status: "signed-in", user })}
+        onBack={() => setShowLogin(false)}
+      />
+    ) : (
+      <HomePage onLogin={() => setShowLogin(true)} />
+    );
   }
 
   const { user } = session;
@@ -1019,11 +1028,11 @@ export default function App() {
           {/* Keyed by tab, so a render error is contained to the screen that
               caused it: the sidebar, the top bar and every other tab keep
               working, and switching away resets the boundary. */}
-          <ErrorBoundary variant="panel" area={`la pantalla de ${pageTitles[activeTab]}`} key={activeTab}>
+          <ErrorBoundary variant="panel" area={pageTitles[activeTab]} key={activeTab}>
           {activeTab === "dashboard" && dashboardState.status === "loading" && (
             <section className="panel active">
               <div className="card">
-                <p className="state-message">Cargando el panel…</p>
+                <p className="state-message">Loading dashboard…</p>
               </div>
             </section>
           )}
@@ -1037,7 +1046,7 @@ export default function App() {
                   className="btn-secondary"
                   onClick={() => void reloadDashboard()}
                 >
-                  Reintentar
+                  Try again
                 </button>
               </div>
             </section>
@@ -1072,7 +1081,7 @@ export default function App() {
           {activeTab === "users" && usersState.status === "loading" && (
             <section className="panel active">
               <div className="card">
-                <p className="state-message">Cargando cuentas…</p>
+                <p className="state-message">Loading accounts…</p>
               </div>
             </section>
           )}
@@ -1082,7 +1091,7 @@ export default function App() {
               <div className="card">
                 <p className="form-error">{usersState.message}</p>
                 <button type="button" className="btn-secondary" onClick={() => void reloadUsers()}>
-                  Reintentar
+                  Try again
                 </button>
               </div>
             </section>
@@ -1102,7 +1111,7 @@ export default function App() {
           {activeTab === "projects" && projectsState.status === "loading" && (
             <section className="panel active">
               <div className="card">
-                <p className="state-message">Cargando proyectos…</p>
+                <p className="state-message">Loading projects…</p>
               </div>
             </section>
           )}
@@ -1116,7 +1125,7 @@ export default function App() {
                   className="btn-secondary"
                   onClick={() => void reloadProjects()}
                 >
-                  Reintentar
+                  Try again
                 </button>
               </div>
             </section>
@@ -1136,7 +1145,7 @@ export default function App() {
           {activeTab === "customers" && customersState.status === "loading" && (
             <section className="panel active">
               <div className="card">
-                <p className="state-message">Cargando clientes…</p>
+                <p className="state-message">Loading customers…</p>
               </div>
             </section>
           )}
@@ -1150,7 +1159,7 @@ export default function App() {
                   className="btn-secondary"
                   onClick={() => void reloadCustomers()}
                 >
-                  Reintentar
+                  Try again
                 </button>
               </div>
             </section>
@@ -1168,7 +1177,7 @@ export default function App() {
           {activeTab === "contracts" && contractsState.status === "loading" && (
             <section className="panel active">
               <div className="card">
-                <p className="state-message">Cargando contratos…</p>
+                <p className="state-message">Loading contracts…</p>
               </div>
             </section>
           )}
@@ -1182,7 +1191,7 @@ export default function App() {
                   className="btn-secondary"
                   onClick={() => void reloadContracts()}
                 >
-                  Reintentar
+                  Try again
                 </button>
               </div>
             </section>
@@ -1204,7 +1213,7 @@ export default function App() {
           {activeTab === "receipts" && transactionsState.status === "loading" && (
             <section className="panel active">
               <div className="card">
-                <p className="state-message">Cargando transacciones…</p>
+                <p className="state-message">Loading transactions…</p>
               </div>
             </section>
           )}
@@ -1218,7 +1227,7 @@ export default function App() {
                   className="btn-secondary"
                   onClick={() => void reloadTransactions()}
                 >
-                  Reintentar
+                  Try again
                 </button>
               </div>
             </section>
@@ -1249,7 +1258,7 @@ export default function App() {
           {activeTab === "lots" && lotsState.status === "loading" && (
             <section className="panel active">
               <div className="card">
-                <p className="state-message">Cargando inventario…</p>
+                <p className="state-message">Loading inventory…</p>
               </div>
             </section>
           )}
@@ -1259,7 +1268,7 @@ export default function App() {
               <div className="card">
                 <p className="form-error">{lotsState.message}</p>
                 <button type="button" className="btn-secondary" onClick={() => void reloadLots()}>
-                  Reintentar
+                  Try again
                 </button>
               </div>
             </section>
@@ -1284,16 +1293,16 @@ export default function App() {
 
       {/* The dialogs share a boundary of their own: a crash inside a form must
           not blank the tables and the navigation behind it. */}
-      <ErrorBoundary variant="panel" area="una ventana">
+      <ErrorBoundary variant="panel" area="a dialog">
       {/* A share this account cannot act on. Its own dialog rather than a line
           inside the receipt form, because the whole point is that the receipt
           form is not opening. */}
       {shareRefusal && (
-        <Dialog ariaLabel="No se puede registrar el pago" onClose={() => setShareRefusal(null)}>
+        <Dialog ariaLabel="Cannot record payment" onClose={() => setShareRefusal(null)}>
           <div className="modal-header">
             <div>
-              <p className="modal-eyebrow">Comprobante compartido</p>
-              <h2>No se puede registrar el pago</h2>
+              <p className="modal-eyebrow">Shared payment proof</p>
+              <h2>Cannot record payment</h2>
             </div>
           </div>
 
@@ -1301,7 +1310,7 @@ export default function App() {
 
           <div className="modal-actions">
             <button type="button" className="btn-secondary" onClick={() => setShareRefusal(null)}>
-              Entendido
+              Understood
             </button>
           </div>
         </Dialog>
@@ -1630,7 +1639,7 @@ export default function App() {
             <p className="window-drop-hint">
               {dropTarget === "contract"
                 ? "Se abre un contrato nuevo con el documento adjunto."
-                : "Se abre una transacción nueva con la imagen adjunta."}
+                : "A new transaction will open with the attached image."}
             </p>
           </div>
         </div>

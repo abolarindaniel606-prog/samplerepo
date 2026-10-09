@@ -301,7 +301,7 @@ export async function uploadContractDocument(
 
   if (!response.ok) {
     const error = payload as { message?: string } | null;
-    throw new ApiError(response.status, error?.message ?? "No se pudo subir el documento.");
+    throw new ApiError(response.status, error?.message ?? "Could not upload the document.");
   }
 
   return (payload as { document: ContractDocument }).document;

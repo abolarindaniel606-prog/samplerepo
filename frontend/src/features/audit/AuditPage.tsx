@@ -16,73 +16,73 @@ import { formatAuditList } from "./auditLines";
 const PAGE_SIZE = 25;
 
 const actionPresentation: Record<AuditAction, { label: string; stampClass: string }> = {
-  create: { label: "Creado", stampClass: "stamp success" },
-  update: { label: "Editado", stampClass: "stamp neutral" },
-  reprice: { label: "Cambio de precio", stampClass: "stamp clay" },
-  archive: { label: "Archivado", stampClass: "stamp danger" },
-  restore: { label: "Restaurado", stampClass: "stamp success" },
-  delete: { label: "Eliminado", stampClass: "stamp danger" },
-  cancel: { label: "Cancelado", stampClass: "stamp danger" },
-  reassign_lot: { label: "Lote corregido", stampClass: "stamp clay" },
-  replace: { label: "Reemplazado por adenda", stampClass: "stamp clay" },
-  reverse: { label: "Reversado", stampClass: "stamp danger" },
+  create: { label: "Created", stampClass: "stamp success" },
+  update: { label: "Edited", stampClass: "stamp neutral" },
+  reprice: { label: "Price changed", stampClass: "stamp clay" },
+  archive: { label: "Archived", stampClass: "stamp danger" },
+  restore: { label: "Restored", stampClass: "stamp success" },
+  delete: { label: "Deleted", stampClass: "stamp danger" },
+  cancel: { label: "Cancelled", stampClass: "stamp danger" },
+  reassign_lot: { label: "Lot corrected", stampClass: "stamp clay" },
+  replace: { label: "Replaced by amendment", stampClass: "stamp clay" },
+  reverse: { label: "Reversed", stampClass: "stamp danger" },
   // No longer written — sign-ins are kept on the account, not here — but the
   // rows recorded before that are still on file and still have to read.
-  login: { label: "Inicio de sesión", stampClass: "stamp neutral" },
-  logout: { label: "Cierre de sesión", stampClass: "stamp neutral" },
+  login: { label: "Signed in", stampClass: "stamp neutral" },
+  logout: { label: "Signed out", stampClass: "stamp neutral" },
 };
 
 /** Field names as staff would say them, rather than as the database spells them. */
 const fieldLabels: Record<string, string> = {
-  code: "Lote",
+  code: "Lot",
   // A contract's lot, corrected — see POST /contracts/:id/reassign-lot.
-  lotCode: "Lote",
-  lotId: "Id del lote",
-  fullName: "Cliente",
-  identification: "Identidad",
-  phone: "Teléfono",
-  email: "Correo",
-  address: "Dirección",
-  customerSince: "Cliente desde",
-  notes: "Notas",
-  projectId: "Proyecto",
-  areaM2: "Área",
-  basePriceCents: "Precio base",
-  archivedAt: "Archivado",
+  lotCode: "Lot",
+  lotId: "Lot ID",
+  fullName: "Customer",
+  identification: "ID",
+  phone: "Phone",
+  email: "Email",
+  address: "Address",
+  customerSince: "Customer since",
+  notes: "Notes",
+  projectId: "Project",
+  areaM2: "Area",
+  basePriceCents: "Base price",
+  archivedAt: "Archived",
   // Account changes, from the Usuarios screen.
-  name: "Nombre",
-  role: "Rol",
-  deactivatedAt: "Cuenta desactivada",
-  passwordResetAt: "Contraseña cambiada",
+  name: "Name",
+  role: "Role",
+  deactivatedAt: "Account deactivated",
+  passwordResetAt: "Password changed",
   // A contract's terms — edits, reprices, and the two sides of an adenda.
-  status: "Situación",
-  saleType: "Forma de pago",
-  salePriceCents: "Precio de venta",
-  downPaymentCents: "Prima",
-  termMonths: "Plazo (meses)",
-  monthlyPaymentCents: "Cuota",
-  dueDay: "Día de pago",
-  signedOn: "Firma",
-  firstDueOn: "Primera cuota",
-  paidToDateCents: "Pagado",
-  settlement: "Lo ya pagado",
-  replacedBy: "Reemplazado por",
-  replaces: "Reemplaza a",
+  status: "Status",
+  saleType: "Sale type",
+  salePriceCents: "Sale price",
+  downPaymentCents: "Down payment",
+  termMonths: "Term (months)",
+  monthlyPaymentCents: "Installment",
+  dueDay: "Payment day",
+  signedOn: "Signed",
+  firstDueOn: "First installment",
+  paidToDateCents: "Paid",
+  settlement: "Amount paid",
+  replacedBy: "Replaced by",
+  replaces: "Replaces",
   // A payment corrected, and a receipt voided — which restates the whole
   // receipt, since issuing one leaves no row of its own.
-  amountCents: "Monto",
-  paidOn: "Fecha del pago",
-  method: "Método",
-  type: "Tipo",
-  reference: "Referencia",
-  receiptNumber: "Número de recibo",
-  customerName: "Cliente",
-  issuedBy: "Emitido por",
+  amountCents: "Amount",
+  paidOn: "Payment date",
+  method: "Method",
+  type: "Type",
+  reference: "Reference",
+  receiptNumber: "Receipt number",
+  customerName: "Customer",
+  issuedBy: "Issued by",
   totalCents: "Total",
-  lines: "Lotes",
+  lines: "Lots",
   // A file taken off a contract or a receipt. Putting one there is not filed.
-  removedDocument: "Documento quitado",
-  removedFile: "Comprobante quitado",
+  removedDocument: "Document removed",
+  removedFile: "Proof of payment removed",
 };
 
 /** Money fields are stored in centavos and must not be printed raw. */
@@ -143,7 +143,7 @@ function formatTimestamp(value: string): string {
   // In the OFFICE's clock, not the reader's. This is a log of when things were
   // done at the counter, so a laptop set to another zone must not restate the
   // history three hours out — see lib/businessTime.ts.
-  return parsed.toLocaleString("es-HN", {
+  return parsed.toLocaleString("en-HN", {
     timeZone: businessTimeZone(),
     day: "2-digit",
     month: "short",
@@ -178,7 +178,7 @@ export function AuditPage({ money }: AuditPageProps) {
     } catch (caught) {
       setState({
         status: "error",
-        message: caught instanceof Error ? caught.message : "No se pudo cargar el historial.",
+        message: caught instanceof Error ? caught.message : "Could not load activity history.",
       });
     }
   }, []);
@@ -191,7 +191,7 @@ export function AuditPage({ money }: AuditPageProps) {
     return (
       <section className="panel active">
         <div className="card">
-          <p className="state-message">Cargando historial…</p>
+          <p className="state-message">Loading activity history…</p>
         </div>
       </section>
     );
@@ -215,12 +215,12 @@ export function AuditPage({ money }: AuditPageProps) {
     <section className="panel active">
       <div className="card">
         <div className="card-head">
-          <h3>Historial de cambios</h3>
-          <span className="tag">{total} registros</span>
+          <h3>Activity history</h3>
+          <span className="tag">{total} records</span>
         </div>
 
         {events.length === 0 ? (
-          <p className="state-message">Todavía no hay movimientos registrados.</p>
+          <p className="state-message">No activity has been recorded yet.</p>
         ) : (
           <div className="audit-list">
             {events.map((event) => {

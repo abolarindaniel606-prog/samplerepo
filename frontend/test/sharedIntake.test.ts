@@ -80,7 +80,7 @@ describe("readShareRequest", () => {
  * all of them is what made the last round of this impossible to pin down.
  */
 describe("describeUndeliveredShare", () => {
-  const received = "text: 0 caracteres; title: 0 caracteres";
+  const received = "text: 0 characters; title: 0 characters";
 
   it("says the file never came when the record holds none", () => {
     const notice = describeUndeliveredShare(
@@ -88,14 +88,14 @@ describe("describeUndeliveredShare", () => {
       received,
     );
 
-    assert.match(notice, /^Lo compartido llegó a Lindero sin la imagen\./);
-    assert.match(notice, /recibido: text: 0 caracteres; title: 0 caracteres/);
+    assert.match(notice, /^The shared file arrived without an image\./);
+    assert.match(notice, /Received: text: 0 characters; title: 0 characters/);
   });
 
   it("tells a missing record apart from an empty one", () => {
     assert.match(
       describeUndeliveredShare({ status: "missing" }, received),
-      /ya no estaba guardado/,
+      /no longer available/,
     );
   });
 
@@ -105,21 +105,21 @@ describe("describeUndeliveredShare", () => {
       received,
     );
 
-    assert.match(notice, /no dejó leerlo/);
-    assert.match(notice, /error: UnknownError: blob read failed/);
+    assert.match(notice, /could not read it/);
+    assert.match(notice, /Error: UnknownError: blob read failed/);
   });
 
   it("keeps the worker's own failure message", () => {
     assert.match(
       describeUndeliveredShare({ status: "failed" }, "TypeError: bad multipart"),
-      /^No se pudo leer lo que compartiste\..*TypeError: bad multipart/,
+      /^Could not read the shared item\..*TypeError: bad multipart/,
     );
   });
 
   it("stays a plain sentence when there is no detail to add", () => {
     assert.equal(
       describeUndeliveredShare({ status: "missing" }, null),
-      "Lo compartido llegó, pero ya no estaba guardado al abrir Lindero. Adjunta el comprobante aquí abajo.",
+      "The shared file arrived but was no longer available when Lindero opened. Attach the payment proof below.",
     );
   });
 });

@@ -124,15 +124,15 @@ export function pasteShortcut(): string {
  */
 export function pasteInstruction(): string {
   return isTouchDevice()
-    ? "Mantén pulsado el campo del chat, pega la imagen y envía."
-    : `Pégalo en el chat con ${pasteShortcut()} y envía.`;
+    ? "Press and hold the chat field, paste the image, and send."
+    : `Paste it into the chat with ${pasteShortcut()} and send.`;
 }
 
 /** How to get the image off the screen by hand, in the words of this device. */
 export function copyGesture(): string {
   return isTouchDevice()
-    ? "mantén pulsada la imagen y compártela"
-    : "clic derecho → Copiar imagen, y pégala en el chat";
+    ? "press and hold the image, then share it"
+    : "right-click → Copy image, then paste it into the chat";
 }
 
 /**

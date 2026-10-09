@@ -60,13 +60,13 @@ export function receiptBlocker(input: BlockerInput): Blocker | null {
   const { customerId, payable, lineCount, amountByContract, amountText } = input;
 
   if (customerId === "") {
-    return { message: "Elige el cliente que está pagando.", focus: CUSTOMER_FIELD };
+    return { message: "Choose the customer making the payment.", focus: CUSTOMER_FIELD };
   }
 
   if (payable.length === 0) {
     return {
       message:
-        "Este cliente no tiene contratos que admitan pagos, así que no se le puede registrar uno.",
+        "This customer has no contracts that can accept payments.",
       focus: CUSTOMER_FIELD,
     };
   }
@@ -78,7 +78,7 @@ export function receiptBlocker(input: BlockerInput): Blocker | null {
   const isMultiLot = payable.length > 1;
 
   if (amountText.trim() === "") {
-    return { message: "Falta el monto que está pagando el cliente.", focus: AMOUNT_FIELD };
+    return { message: "Enter the amount the customer is paying.", focus: AMOUNT_FIELD };
   }
 
   // Typed, but nothing a receipt can be made of — a lone "0", or a field
@@ -88,7 +88,7 @@ export function receiptBlocker(input: BlockerInput): Blocker | null {
   const typed = parseMoneyInput(amountText);
 
   if (Number.isNaN(typed) || typed <= 0) {
-    return { message: "El monto tiene que ser mayor que cero.", focus: AMOUNT_FIELD };
+    return { message: "The amount must be greater than zero.", focus: AMOUNT_FIELD };
   }
 
   // From here the amount is real, so with one lot there would already be a
@@ -97,7 +97,7 @@ export function receiptBlocker(input: BlockerInput): Blocker | null {
 
   if (payable.some((contract) => (amountByContract[contract.id] ?? "").trim() !== "")) {
     return {
-      message: "Ningún lote está recibiendo dinero. Escribe cuánto recibe al menos uno.",
+      message: "No lot is receiving money. Enter an amount for at least one lot.",
       focus: firstAmount,
     };
   }
@@ -108,7 +108,7 @@ export function receiptBlocker(input: BlockerInput): Blocker | null {
   if (isMultiLot) {
     return {
       message:
-        "Falta repartir el monto. Pulsa «Repartir el monto entre los lotes», o escribe cuánto recibe cada lote.",
+        "The amount has not been split. Select “Split amount among lots” or enter the amount for each lot.",
       focus: firstAmount,
     };
   }
@@ -116,5 +116,5 @@ export function receiptBlocker(input: BlockerInput): Blocker | null {
   /* One lot, a positive amount and still no line is not reachable through the
      form — it would mean `lines` and this disagreed about the same figure. Say
      something true rather than nothing. */
-  return { message: "Falta el monto que está pagando el cliente.", focus: AMOUNT_FIELD };
+  return { message: "Enter the amount the customer is paying.", focus: AMOUNT_FIELD };
 }

@@ -127,7 +127,7 @@ export function acceptProofFiles(
 
   for (const file of incoming) {
     if (alreadyHeld + accepted.length >= maxFiles) {
-      rejections.push(`Puedes adjuntar hasta ${maxFiles} comprobantes por recibo.`);
+      rejections.push(`You can attach up to ${maxFiles} payment proofs per receipt.`);
       break;
     }
 
@@ -137,17 +137,17 @@ export function acceptProofFiles(
     const isHeicByName = /\.hei[cf]$/i.test(file.name);
 
     if (!ACCEPTED.includes(file.type) && !(file.type === "" && isHeicByName)) {
-      rejections.push(`«${file.name}» no es una imagen ni un PDF.`);
+      rejections.push(`“${file.name}” is not an image or a PDF.`);
       continue;
     }
 
     if (file.size === 0) {
-      rejections.push(`«${file.name}» está vacío.`);
+      rejections.push(`“${file.name}” is empty.`);
       continue;
     }
 
     if (file.size > MAX_BYTES) {
-      rejections.push(`«${file.name}» pesa ${readableSize(file.size)}; el máximo es 12 MB.`);
+      rejections.push(`“${file.name}” is ${readableSize(file.size)}; the maximum is 12 MB.`);
       continue;
     }
 
@@ -269,7 +269,7 @@ export function ProofDropzone({
    * a dropped one.
    */
   const pickFromDrive = async () => {
-    setDriveBusy("Abriendo Google Drive…");
+    setDriveBusy("Opening Google Drive…");
 
     try {
       const { files: picked, rejections } = await pickProofsFromDrive(setDriveBusy);
@@ -280,7 +280,7 @@ export function ProofDropzone({
 
       accept(picked);
     } catch (caught) {
-      onReject(caught instanceof Error ? caught.message : "No se pudo abrir Google Drive.");
+      onReject(caught instanceof Error ? caught.message : "Could not open Google Drive.");
     } finally {
       setDriveBusy(null);
     }
@@ -311,10 +311,10 @@ export function ProofDropzone({
         }`}
         {...dropHandlers}
       >
-        <p className="proof-dropzone-title">Arrastra el comprobante aquí</p>
+        <p className="proof-dropzone-title">Drop payment proof here</p>
         <p className="proof-dropzone-hint">
-          La captura del depósito o la transferencia, directo desde WhatsApp. JPG, PNG, HEIC o PDF,
-          hasta 12 MB.
+          Upload a screenshot of the deposit or transfer, directly from WhatsApp. JPG, PNG, HEIC,
+          or PDF, up to 12 MB.
         </p>
 
         <div className="proof-dropzone-actions">
@@ -324,7 +324,7 @@ export function ProofDropzone({
             disabled={disabled || driveBusy !== null}
             onClick={() => inputRef.current?.click()}
           >
-            Elegir archivo
+            Choose file
           </button>
 
           {/* Left out entirely where no Google credentials were configured —
@@ -336,7 +336,7 @@ export function ProofDropzone({
               disabled={disabled || driveBusy !== null}
               onClick={() => void pickFromDrive()}
             >
-              Desde Google Drive
+              From Google Drive
             </button>
           )}
         </div>
@@ -370,7 +370,7 @@ export function ProofDropzone({
                 type="button"
                 className="proof-open"
                 onClick={() => setViewing(entry.id)}
-                title="Ver este comprobante"
+                title="View this payment proof"
                 aria-label={`Ver ${entry.file.name}`}
               >
                 <DocumentThumb file={viewerFiles[at]!} />
@@ -392,10 +392,10 @@ export function ProofDropzone({
                 <select
                   className="proof-lot"
                   value={entry.contractId ?? ""}
-                  aria-label={`Lote al que corresponde ${entry.file.name}`}
+                  aria-label={`Lot for ${entry.file.name}`}
                   onChange={(event) => assignLot(entry.id, event.target.value || null)}
                 >
-                  <option value="">Todo el recibo</option>
+                  <option value="">Entire receipt</option>
                   {lots.map((lot) => (
                     <option key={lot.contractId} value={lot.contractId}>
                       {lot.lotCode}

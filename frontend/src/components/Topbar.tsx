@@ -61,7 +61,7 @@ export function Topbar({
   return (
     <header className="topbar">
       {/* Visible only on phones — see the .menu-btn rule at the end of styles.css */}
-      <button className="icon-btn menu-btn" onClick={onOpenMenu} aria-label="Abrir menú">
+      <button className="icon-btn menu-btn" onClick={onOpenMenu} aria-label="Open menu">
         <IconMenu />
       </button>
 
@@ -94,7 +94,7 @@ export function Topbar({
             title={
               currency === "USD"
                 ? "Toca de nuevo para ver o cambiar la tasa de cambio"
-                : "Mostrar los montos en dólares"
+                : "Show amounts in US dollars"
             }
           >
             USD
@@ -123,7 +123,7 @@ export function Topbar({
             className={rate.isStale ? "currency-rate stale" : "currency-rate"}
             onClick={() => setRateOpen((open) => !open)}
             aria-expanded={isRateOpen}
-            title="Ver o cambiar la tasa de cambio"
+            title="View or change the exchange rate"
           >
             <span className="currency-rate-value">L. {formatRate(rate.rate)}</span>
             <IconChevronDown />
@@ -132,7 +132,7 @@ export function Topbar({
 
         <MenuSurface
           isOpen={isRateOpen}
-          title="Tasa de cambio"
+          title="Exchange rate"
           onClose={() => setRateOpen(false)}
           className="rate-popover"
         >

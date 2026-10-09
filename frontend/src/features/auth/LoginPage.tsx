@@ -8,9 +8,10 @@ import { authApi } from "./api";
 
 interface LoginPageProps {
   onSignedIn: (user: User) => void;
+  onBack: () => void;
 }
 
-export function LoginPage({ onSignedIn }: LoginPageProps) {
+export function LoginPage({ onSignedIn, onBack }: LoginPageProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -27,7 +28,7 @@ export function LoginPage({ onSignedIn }: LoginPageProps) {
       // The server deliberately gives the same message for an unknown email as
       // for a wrong password, so this screen must not guess at a better one.
       setError(
-        caught instanceof ApiError ? caught.message : "No se pudo iniciar sesión.",
+        caught instanceof ApiError ? caught.message : "Could not sign in.",
       );
     } finally {
       setSubmitting(false);
@@ -37,20 +38,32 @@ export function LoginPage({ onSignedIn }: LoginPageProps) {
   return (
     <div className="login-screen">
       <form className="login-card" onSubmit={handleSubmit}>
+        <button type="button" className="login-back" onClick={onBack}>
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path
+              d="M19 12H5m6 6-6-6 6-6"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+          Back to home
+        </button>
         <div className="login-brand">
           <div className="brand-mark">
             <IconBrand />
           </div>
           <div>
             <div className="brand-name">Lindero</div>
-            <div className="brand-sub">Gestión de lotes</div>
+            <div className="brand-sub">Land Management</div>
           </div>
         </div>
 
-        <h1 className="login-title">Iniciar sesión</h1>
+        <h1 className="login-title">Sign in</h1>
 
         <div className="form-field full-width">
-          <label htmlFor="login-email">Correo</label>
+          <label htmlFor="login-email">Email</label>
           <input
             id="login-email"
             type="email"
@@ -62,7 +75,7 @@ export function LoginPage({ onSignedIn }: LoginPageProps) {
         </div>
 
         <div className="form-field full-width">
-          <label htmlFor="login-password">Contraseña</label>
+          <label htmlFor="login-password">Password</label>
           <input
             id="login-password"
             type="password"
@@ -76,7 +89,7 @@ export function LoginPage({ onSignedIn }: LoginPageProps) {
         {error && <p className="form-error">{error}</p>}
 
         <button type="submit" className="btn-primary login-submit" disabled={isSubmitting}>
-          <span>{isSubmitting ? "Entrando…" : "Entrar"}</span>
+          <span>{isSubmitting ? "Signing in…" : "Sign in"}</span>
         </button>
       </form>
     </div>

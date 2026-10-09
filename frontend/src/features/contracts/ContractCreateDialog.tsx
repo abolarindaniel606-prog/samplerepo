@@ -41,8 +41,8 @@ type Step = "parties" | "terms";
  */
 function uploadFailure(code: string, names: string[]): string {
   return (
-    `El contrato quedó creado como ${code}, pero no se pudo subir ${names.join(", ")}. ` +
-    "Vuelve a intentarlo, o adjúntalo después desde el contrato."
+    `Contract ${code} was created, but ${names.join(", ")} could not be uploaded. ` +
+    "Try again, or attach it later from the contract."
   );
 }
 
@@ -356,14 +356,14 @@ export function ContractCreateDialog({
       const first = members[0]!;
       const lots = members
         .map((member) => member.lot.code)
-        .sort((a, b) => a.localeCompare(b, "es"));
+        .sort((a, b) => a.localeCompare(b, "en"));
 
       return {
         // Any member joins the same purchase; the first is as good as any.
         value: first.id,
         label:
           members.length === 1
-            ? `${first.code} · Lote ${first.lot.code} · firmado ${formatDate(first.terms.signedOn)}`
+            ? `${first.code} · Lot ${first.lot.code} · signed ${formatDate(first.terms.signedOn)}`
             : `Compra de ${members.length} lotes · ${lots.join(", ")} · firmada ${formatDate(first.terms.signedOn)}`,
         lotCount: members.length,
       };
@@ -464,11 +464,11 @@ export function ContractCreateDialog({
 
   const submitParties = () => {
     if (customer === null) {
-      setError("Elige el cliente que firma este contrato.");
+      setError("Choose the customer signing this contract.");
       return;
     }
     if (lot === null) {
-      setError("Elige el lote que se está vendiendo.");
+      setError("Choose the lot being sold.");
       return;
     }
 
@@ -543,34 +543,34 @@ export function ContractCreateDialog({
     // so a mistake is caught before the round trip rather than after it.
     if (!isDonation) {
       if (!Number.isFinite(priceNumber) || priceNumber < 0) {
-        setError("Escribe el precio de venta en lempiras.");
+        setError("Enter the sale price in lempiras.");
         return;
       }
     }
 
     if (isFinanced) {
       if (!Number.isFinite(downNumber) || downNumber < 0) {
-        setError("Escribe la prima en lempiras.");
+        setError("Enter the down payment in lempiras.");
         return;
       }
       if (downCents > priceCents) {
-        setError("La prima no puede ser mayor que el precio de venta.");
+        setError("The down payment cannot exceed the sale price.");
         return;
       }
       if (!hasTerm) {
-        setError("Un contrato a crédito necesita el plazo en meses.");
+        setError("A financed contract requires a term in months.");
         return;
       }
       if (monthlyCents <= 0) {
-        setError("Un contrato a crédito necesita la cuota mensual.");
+        setError("A financed contract requires a monthly installment.");
         return;
       }
       if (!hasDueDay) {
-        setError("El día de pago debe estar entre 1 y 31.");
+        setError("Payment day must be between 1 and 31.");
         return;
       }
       if (downCents === priceCents) {
-        setError("Si la prima cubre todo el precio, la venta es de contado, no a crédito.");
+        setError("If the down payment covers the full price, this is a cash sale, not a financed sale.");
         return;
       }
     }
@@ -581,27 +581,27 @@ export function ContractCreateDialog({
     // screen is an error nobody can clear. They are sent as null below instead.
 
     if (signedOn.trim() === "") {
-      setError("Escribe la fecha en que se firmó el contrato.");
+      setError("Enter the date the contract was signed.");
       return;
     }
     if (isReservation && expiresOn.trim() === "") {
-      setError("Una reserva necesita una fecha de vencimiento.");
+      setError("A reservation requires an expiration date.");
       return;
     }
     // Guarded on `isFinanced` for the same reason as the note above: the field
     // is only on screen for a credit sale, and a leftover date behind a hidden
     // field must not refuse a save. It is sent as null below either way.
     if (isFinanced && firstDueOn.trim() !== "" && firstDueOn < signedOn) {
-      setError("La primera cuota no puede vencer antes de firmar el contrato.");
+      setError("The first installment cannot be due before the contract is signed.");
       return;
     }
     if (isReservation && expiresOn < signedOn) {
-      setError("El vencimiento de la reserva no puede ser anterior a la firma.");
+      setError("A reservation cannot expire before it is signed.");
       return;
     }
 
     setSaving(true);
-    setSavingStep("Creando el contrato…");
+    setSavingStep("Creating contract…");
 
     let contract: { id: string; code: string };
 
@@ -631,7 +631,7 @@ export function ContractCreateDialog({
       // The server checks every one of these rules independently, and it is
       // also the only one that can see whether somebody else took this lot
       // thirty seconds ago — so that refusal surfaces here too.
-      setError(caught instanceof Error ? caught.message : "No se pudo crear el contrato.");
+      setError(caught instanceof Error ? caught.message : "Could not create the contract.");
       setSaving(false);
       setSavingStep(null);
       return;
@@ -685,24 +685,24 @@ export function ContractCreateDialog({
           <div>
             <p className="modal-eyebrow">
               {created === null
-                ? `Nuevo contrato · Paso ${step === "parties" ? 1 : 2} de 2`
-                : `Contrato ${created.code} creado`}
+                ? `New contract · Step ${step === "parties" ? 1 : 2} of 2`
+                : `Contract ${created.code} created`}
             </p>
             <h2>
               {created !== null
                 ? isSaving
-                  ? "Guardando el contrato firmado"
-                  : "Falta el contrato firmado"
+                  ? "Saving signed contract"
+                  : "Signed contract needed"
                 : step === "parties"
-                  ? "Cliente y lote"
-                  : "Términos de la venta"}
+                  ? "Customer and lot"
+                  : "Sale terms"}
             </h2>
             <p className="modal-description">
               {created === null && step === "parties" ? (
-                "Un contrato es una persona y un lote. El número se asigna solo al guardar."
+                "A contract connects one customer with one lot. A number is assigned when you save."
               ) : customer && lot ? (
                 <>
-                  {customer.fullName} · Lote {lot.code} · {lot.projectName}
+                  {customer.fullName} · Lot {lot.code} · {lot.projectName}
                 </>
               ) : (
                 ""
@@ -720,7 +720,7 @@ export function ContractCreateDialog({
             onClick={close}
             disabled={isWorking}
             title={documentBusy ?? undefined}
-            aria-label="Cerrar"
+            aria-label="Close"
           >
             <IconClose />
           </button>
@@ -734,7 +734,7 @@ export function ContractCreateDialog({
                 /* Said plainly, because a form that comes back looking
                    finished with its scan quietly missing is how an unfiled
                    contract gets saved and nobody notices for months. */
-                missing="El contrato firmado que habías adjuntado hay que volver a elegirlo."
+                missing="Please reselect the signed contract you attached."
                 onRestore={() => {
                   const saved = draft.found!.values;
 
@@ -783,14 +783,14 @@ export function ContractCreateDialog({
               <p className="form-note full-width">
                 {documents.length === 1 ? (
                   <>
-                    Se adjuntará <strong>{documents[0]!.file.name}</strong> al contrato.
+                    <strong>{documents[0]!.file.name}</strong> will be attached to the contract.
                   </>
                 ) : (
                   <>
-                    Se adjuntarán <strong>{documents.length} archivos</strong> al contrato.
+                    <strong>{documents.length} files</strong> will be attached to the contract.
                   </>
                 )}{" "}
-                Elige el cliente y el lote para continuar.
+                Choose the customer and lot to continue.
               </p>
             )}
 
@@ -800,7 +800,7 @@ export function ContractCreateDialog({
                   moment a choice is made. The controls inside carry their own
                   aria-label instead. */}
               <p className="picker-label">
-                Cliente<span className="required-mark" aria-hidden="true"> *</span>
+                Customer<span className="required-mark" aria-hidden="true"> *</span>
               </p>
               <CustomerPicker
                 customers={customers}
@@ -811,7 +811,7 @@ export function ContractCreateDialog({
 
             <div className="form-field full-width">
               <p className="picker-label">
-                Lote<span className="required-mark" aria-hidden="true"> *</span>
+                Lot<span className="required-mark" aria-hidden="true"> *</span>
               </p>
               <LotPicker
                 lots={lots}
@@ -821,8 +821,8 @@ export function ContractCreateDialog({
                 onSelect={chooseLot}
               />
               <span className="field-hint">
-                Solo aparecen los lotes libres. Guardar este contrato es lo que saca el lote del
-                inventario disponible; no hay un estado que marcar aparte.
+                Only available lots are shown. Saving this contract removes the lot from
+                available inventory; there is no separate status to set.
               </span>
             </div>
 
@@ -830,13 +830,13 @@ export function ContractCreateDialog({
                 live contract cannot be buying a second lot of the same deal. */}
             {purchaseOptions.length > 0 && (
               <div className="form-field full-width">
-                <label htmlFor="new-contract-group">¿Es parte de una compra que ya existe?</label>
+                <label htmlFor="new-contract-group">Is this part of an existing purchase?</label>
                 <select
                   id="new-contract-group"
                   value={joinContractId}
                   onChange={(event) => setJoinContractId(event.target.value)}
                 >
-                  <option value="">No, es una compra aparte</option>
+                  <option value="">No, this is a separate purchase</option>
                   {purchaseOptions.map((option) => (
                     <option key={option.value} value={option.value}>
                       {option.label}
@@ -845,8 +845,8 @@ export function ContractCreateDialog({
                 </select>
                 <span className="field-hint">
                   {joinContract
-                    ? `Los ${joinLotCount + 1} lotes quedan como una sola compra, cada uno con su propio saldo. Un pago de ${customer?.fullName} podrá repartirse entre ellos desde la lista de contratos.`
-                    : "Únelo solo si es la misma venta: dos lotes firmados el mismo día, con un solo recibo. Lotes comprados en años distintos comparten al cliente, no la compra."}
+                    ? `The ${joinLotCount + 1} lots will be part of one purchase, each with its own balance. A payment from ${customer?.fullName} can be split between them from the contracts list.`
+                    : "Join only if this is the same sale: lots signed on the same day with one receipt. Lots purchased in different years share a customer, not a purchase."}
                 </span>
               </div>
             )}
@@ -876,7 +876,7 @@ export function ContractCreateDialog({
             </div>
 
             <div className="form-field">
-              <label htmlFor="new-contract-sale-type">Forma de pago</label>
+              <label htmlFor="new-contract-sale-type">Payment method</label>
               <select
                 id="new-contract-sale-type"
                 value={saleType}
@@ -889,8 +889,8 @@ export function ContractCreateDialog({
                 ))}
               </select>
               <span className="field-hint">
-                Solo el crédito lleva prima, plazo, cuota y día de pago. Lo de contado se paga
-                completo al firmar.
+                Financed sales have a down payment, term, installment, and payment day. Cash
+                sales are paid in full when signed.
               </span>
             </div>
 
@@ -899,8 +899,8 @@ export function ContractCreateDialog({
                 and then refused. */}
             {isDonation ? (
               <p className="form-blocked full-width">
-                Una donación se registra con precio y prima en cero. El lote sale del inventario
-                igual que con una venta, y su historial dice a quién se entregó.
+                A donation is recorded with a price and down payment of zero. The lot leaves
+                inventory just like a sale, and its history records who received it.
               </p>
             ) : (
               <div className="form-field">
@@ -915,16 +915,16 @@ export function ContractCreateDialog({
                 />
                 <span className="field-hint">
                   {priceCents === lot.basePrice ? (
-                    <>Precio de lista del lote. Es negociable: escribe lo que se acordó.</>
+                    <>Lot list price. It is negotiable: enter the agreed amount.</>
                   ) : (
                     <>
-                      El lote está en lista a {formatMoney(lot.basePrice, money)}.{" "}
+                      The lot is listed at {formatMoney(lot.basePrice, money)}.{" "}
                       <button
                         type="button"
                         className="link-btn"
                         onClick={() => setPriceOverride(null)}
                       >
-                        Volver al precio de lista
+                        Reset to list price
                       </button>
                     </>
                   )}
@@ -941,7 +941,7 @@ export function ContractCreateDialog({
                 pendiente forever. */}
             {isFinanced && (
               <div className="form-field">
-                <label htmlFor="new-contract-down">Prima acordada</label>
+                <label htmlFor="new-contract-down">Agreed down payment</label>
                 <MoneyInput
                   id="new-contract-down"
                   value={downPayment}
@@ -949,8 +949,8 @@ export function ContractCreateDialog({
                   placeholder="0.00"
                 />
                 <span className="field-hint">
-                  Lo acordado, no lo cobrado. La prima que entra se registra después como un
-                  pago, y hasta entonces la lista lo dirá.
+                  The agreed amount, not the amount collected. Any down payment received is
+                  recorded separately as a payment, and the list will reflect it once recorded.
                 </span>
               </div>
             )}
@@ -973,14 +973,14 @@ export function ContractCreateDialog({
                   />
                   <span className="field-hint">
                     {financed > 0
-                      ? `Se financian ${formatMoney(cents(financed), money)} después de la prima.`
-                      : "Lo que queda después de la prima es lo que se financia."}
+                      ? `${formatMoney(cents(financed), money)} will be financed after the down payment.`
+                      : "The amount remaining after the down payment is the amount financed."}
                   </span>
                 </div>
 
                 <div className="form-field">
                   <label htmlFor="new-contract-monthly">
-                    Cuota mensual<span className="required-mark" aria-hidden="true"> *</span>
+                    Monthly installment<span className="required-mark" aria-hidden="true"> *</span>
                   </label>
                   <MoneyInput
                     id="new-contract-monthly"
@@ -990,28 +990,28 @@ export function ContractCreateDialog({
                   />
                   <span className="field-hint">
                     {suggestedMonthly !== null && monthlyOverride === null
-                      ? "Sugerida a partir del plazo. La cuota se negocia: escribe otra si se acordó otra."
+                      ? "Suggested based on the term. Installments are negotiable; enter a different amount if agreed."
                       : suggestedMonthly !== null
                         ? (
                             <>
-                              Repartido en partes iguales daría{" "}
+                              Equal installments would be{" "}
                               {formatMoney(cents(suggestedMonthly), money)}.{" "}
                               <button
                                 type="button"
                                 className="link-btn"
                                 onClick={() => setMonthlyOverride(null)}
                               >
-                                Usar esa cuota
+                                Use this installment
                               </button>
                             </>
                           )
-                        : "Escribe primero el plazo para ver la cuota sugerida."}
+                        : "Enter the term first to see the suggested installment."}
                   </span>
                 </div>
 
                 <div className="form-field">
                   <label htmlFor="new-contract-due-day">
-                    Día de pago<span className="required-mark" aria-hidden="true"> *</span>
+                    Payment day<span className="required-mark" aria-hidden="true"> *</span>
                   </label>
                   <input
                     id="new-contract-due-day"
@@ -1024,7 +1024,7 @@ export function ContractCreateDialog({
                     onChange={(event) => setDueDay(clampDueDayInput(event.target.value))}
                   />
                   <span className="field-hint">
-                    Los meses cortos se ajustan solos: el 31 vence el 28 en febrero.
+                    Short months adjust automatically: a payment due on the 31st is due on February 28.
                   </span>
                 </div>
               </>
@@ -1043,13 +1043,13 @@ export function ContractCreateDialog({
               <span className="field-hint">
                 {joinContract && signedOnOverride === null
                   ? `Tomada de ${joinContract.code}, la otra mitad de esta compra.`
-                  : "Desde aquí cuenta el calendario de pagos."}
+                  : "The payment schedule starts on this date."}
               </span>
             </div>
 
             {isFinanced && (
               <div className="form-field">
-                <label htmlFor="new-contract-first-due">Primera cuota</label>
+                <label htmlFor="new-contract-first-due">First installment</label>
                 <input
                   id="new-contract-first-due"
                   type="date"
@@ -1058,8 +1058,8 @@ export function ContractCreateDialog({
                 />
                 <span className="field-hint">
                   {firstDueOn.trim() === "" && scheduledFirstDue !== null
-                    ? `Opcional. Sin fecha vence el ${formatDate(scheduledFirstDue)}, un mes después de firmar.`
-                    : "Solo si se negoció aparte. Déjalo vacío para contar un mes desde la firma."}
+                    ? `Optional. If blank, it is due on ${formatDate(scheduledFirstDue)}, one month after signing.`
+                    : "Only if agreed separately. Leave blank to set it one month after signing."}
                 </span>
               </div>
             )}
@@ -1067,7 +1067,7 @@ export function ContractCreateDialog({
             {isReservation && (
               <div className="form-field">
                 <label htmlFor="new-contract-expires">
-                  Vence la reserva<span className="required-mark" aria-hidden="true"> *</span>
+                  Reservation expires<span className="required-mark" aria-hidden="true"> *</span>
                 </label>
                 <input
                   id="new-contract-expires"
@@ -1076,7 +1076,7 @@ export function ContractCreateDialog({
                   onChange={(event) => setExpiresOverride(event.target.value)}
                 />
                 <span className="field-hint">
-                  Un apartado sin fecha deja el lote fuera del mercado para siempre.
+                  A reservation without an expiration date keeps the lot off the market indefinitely.
                 </span>
               </div>
             )}
@@ -1087,11 +1087,11 @@ export function ContractCreateDialog({
                 id="new-contract-notes"
                 rows={2}
                 value={notes}
-                placeholder="Ej. Paga por transferencia los primeros días del mes."
+                placeholder="E.g. Pays by bank transfer in the first few days of the month."
                 onChange={(event) => setNotes(event.target.value)}
               />
               <span className="field-hint">
-                Se ve en la lista de contratos, debajo del nombre del cliente.
+                Shown in the contracts list, below the customer's name.
               </span>
             </div>
 
@@ -1099,7 +1099,7 @@ export function ContractCreateDialog({
                 afterwards. The scan and the terms come off the same piece of
                 paper, in the same minute — see `ContractDocumentDropzone`. */}
             <div className="form-field full-width">
-              <label>Contrato firmado</label>
+              <label>Signed contract</label>
               <ContractDocumentDropzone
                 files={documents}
                 onFilesChange={setDocuments}
@@ -1108,8 +1108,8 @@ export function ContractCreateDialog({
                 disabled={isSaving}
               />
               <span className="field-hint">
-                Opcional ahora. Se sube en cuanto el contrato existe, y también puede adjuntarse
-                después desde el contrato.
+                Optional for now. It will be uploaded once the contract exists, and can also be
+                attached later from the contract.
               </span>
             </div>
 
@@ -1121,22 +1121,22 @@ export function ContractCreateDialog({
             {schedule !== null && (
               <p className="form-note full-width">
                 <strong>
-                  {schedule.count} cuota{schedule.count === 1 ? "" : "s"}
+                  {schedule.count} installment{schedule.count === 1 ? "" : "s"}
                 </strong>{" "}
-                de {formatMoney(cents(monthlyCents), money)}, de{" "}
+                of {formatMoney(cents(monthlyCents), money)}, from{" "}
                 {formatDate(scheduledFirstDue)} a {formatDate(schedule.lastDueOn)}.
                 {schedule.lastAmountCents !== monthlyCents && (
                   <>
                     {" "}
-                    La última es de {formatMoney(cents(schedule.lastAmountCents), money)}: absorbe
-                    la diferencia del redondeo.
+                    The last is {formatMoney(cents(schedule.lastAmountCents), money)} to account
+                    for rounding.
                   </>
                 )}
                 {schedule.count < (months ?? 0) && (
                   <>
                     {" "}
-                    Con esa cuota el saldo se termina en {schedule.count} meses, antes de los{" "}
-                    {months} del plazo.
+                    At this installment amount, the balance will be paid off in {schedule.count}
+                    months, before the {months}-month term ends.
                   </>
                 )}
               </p>
@@ -1163,19 +1163,19 @@ export function ContractCreateDialog({
                 going up. */}
             {isSaving ? (
               <p className="form-note full-width">
-                El contrato <strong>{created.code}</strong> ya está guardado. Falta subir el
-                archivo; no cierres esta ventana.
+                Contract <strong>{created.code}</strong> is saved. The file still needs to upload;
+                do not close this window.
               </p>
             ) : (
               <p className="form-warning full-width">
-                El contrato <strong>{created.code}</strong> quedó creado y el lote ya salió del
-                inventario. Lo único que falta es el archivo; los términos están guardados y se
-                corrigen desde el contrato, no aquí.
+                Contract <strong>{created.code}</strong> was created and the lot is no longer
+                available in inventory. Only the file is missing; the terms are saved and can be
+                changed from the contract, not here.
               </p>
             )}
 
             <div className="form-field full-width">
-              <label>Contrato firmado</label>
+              <label>Signed contract</label>
               <ContractDocumentDropzone
                 files={documents}
                 onFilesChange={setDocuments}
@@ -1194,11 +1194,11 @@ export function ContractCreateDialog({
             /* Not "Cancelar": there is nothing left to cancel. It closes the
                form and leaves the contract standing, with or without its scan. */
             <button type="button" className="btn-secondary" onClick={close} disabled={isWorking}>
-              Cerrar
+              Close
             </button>
           ) : step === "terms" ? (
             <button type="button" className="btn-secondary" onClick={goBack} disabled={isWorking}>
-              Atrás
+              Back
             </button>
           ) : (
             <button
@@ -1207,7 +1207,7 @@ export function ContractCreateDialog({
               onClick={onCancel}
               disabled={isWorking}
             >
-              Cancelar
+              Cancel
             </button>
           )}
 
@@ -1227,7 +1227,7 @@ export function ContractCreateDialog({
                 : created !== null
                   ? documents.length === 0
                     ? "Listo"
-                    : "Reintentar"
+                    : "Try again"
                   : step === "parties"
                     ? "Continuar"
                     : isReservation

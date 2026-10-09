@@ -1,8 +1,8 @@
 {
   "name": "Lindero",
   "short_name": "Lindero",
-  "description": "Inventario de lotes, contratos, pagos y recibos.",
-  "lang": "es",
+  "description": "Manage lots, contracts, payments, and receipts.",
+  "lang": "en",
   "id": "/",
   "start_url": "/",
   "scope": "/",

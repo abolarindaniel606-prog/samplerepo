@@ -18,116 +18,115 @@ const GROUPS: Array<{
   items: Array<{ capability: Capability; label: string; hint?: string }>;
 }> = [
   {
-    title: "Lotes",
-    description: "El inventario de terrenos.",
+    title: "Lots",
+    description: "Land inventory.",
     items: [
-      { capability: "lot:create", label: "Crear lotes" },
-      { capability: "lot:edit", label: "Editar lotes" },
+      { capability: "lot:create", label: "Create lots" },
+      { capability: "lot:edit", label: "Edit lots" },
       {
         capability: "lot:archive",
-        label: "Archivar lotes",
-        hint: "Los saca del inventario activo; nada se elimina.",
+        label: "Archive lots",
+        hint: "Removes them from the active inventory; nothing is deleted.",
       },
     ],
   },
   {
-    title: "Proyectos",
-    description: "Los desarrollos que agrupan los lotes.",
+    title: "Projects",
+    description: "Developments that group lots.",
     items: [
-      { capability: "project:create", label: "Crear proyectos" },
-      { capability: "project:edit", label: "Editar proyectos y su unidad de área" },
-      { capability: "project:archive", label: "Archivar proyectos" },
+      { capability: "project:create", label: "Create projects" },
+      { capability: "project:edit", label: "Edit projects and their area units" },
+      { capability: "project:archive", label: "Archive projects" },
     ],
   },
   {
-    title: "Clientes y contratos",
-    description: "El trabajo del día a día.",
+    title: "Customers and contracts",
+    description: "Day-to-day work.",
     items: [
-      { capability: "customer:create", label: "Registrar clientes" },
-      { capability: "customer:edit", label: "Editar clientes" },
+      { capability: "customer:create", label: "Add customers" },
+      { capability: "customer:edit", label: "Edit customers" },
       {
         capability: "customer:delete",
-        label: "Eliminar clientes",
-        hint: "Solo a quien nunca ha tenido un contrato. Exige escribir un motivo.",
+        label: "Delete customers",
+        hint: "Only customers who have never had a contract. A reason is required.",
       },
-      { capability: "contract:create", label: "Crear contratos y reservas" },
+      { capability: "contract:create", label: "Create contracts and reservations" },
       {
         capability: "contract:edit",
-        label: "Editar los términos de un contrato",
+        label: "Edit contract terms",
         hint:
-          "Plazo, cuota, día de pago, fechas y notas. Siempre exige escribir un motivo, " +
-          "porque cambia lo que se firmó. El precio de venta va aparte.",
+          "Term, installment, payment day, dates, and notes. A reason is required because this " +
+          "changes the signed agreement. The sale price is managed separately.",
       },
       {
         capability: "contract:reprice",
-        label: "Cambiar el precio de venta de un contrato",
+        label: "Change a contract's sale price",
         hint:
-          "Cambia lo que el cliente debe. Se puede ceder «Editar los términos» sin ceder " +
-          "esto: mover un día de cobro y mover un saldo no son la misma confianza.",
+          "Changes what the customer owes. This can be granted separately from editing terms: " +
+          "changing a payment day and changing a balance require different levels of trust.",
       },
       {
         capability: "contract:reassign_lot",
-        label: "Corregir el lote de un contrato",
+        label: "Correct a contract's lot",
         hint:
-          "Solo para un lote mal capturado por error: el contrato pasa a otro lote y conserva " +
-          "sus pagos. No es para vender otro lote — eso es un contrato nuevo. Exige escribir " +
-          "un motivo.",
+          "Only for correcting a lot entered by mistake: the contract moves to another lot and " +
+          "keeps its payments. To sell another lot, create a new contract. A reason is required.",
       },
       {
         capability: "contract:amend",
-        label: "Registrar adendas",
+        label: "Record amendments",
         hint:
-          "Un nuevo acuerdo sobre contratos vigentes: los cierra como «Reemplazado», con sus " +
-          "pagos y recibos intactos, y abre contratos nuevos con el nuevo precio y plazo. " +
-          "Exige escribir un motivo.",
+          "Record a new agreement for active contracts: the old contracts are marked as " +
+          "replaced, with payments and receipts intact, and new contracts are created with the " +
+          "new price and term. A reason is required.",
       },
       {
         capability: "contract:cancel",
-        label: "Cancelar contratos",
-        hint: "Libera el lote y deja el contrato en el historial.",
+        label: "Cancel contracts",
+        hint: "Releases the lot and keeps the contract in the activity history.",
       },
     ],
   },
   {
-    title: "Dinero",
-    description: "Lo que toca los saldos. Piénsalo dos veces antes de ceder estos.",
+    title: "Money",
+    description: "These actions affect balances. Consider carefully before granting them.",
     items: [
-      { capability: "payment:record", label: "Registrar pagos" },
+      { capability: "payment:record", label: "Record payments" },
       {
         capability: "payment:reverse",
-        label: "Reversar pagos y anular recibos",
+        label: "Reverse payments and void receipts",
         hint:
-          "Escribe una reversa: el pago original queda a la vista y deja de contar. " +
-          "No permite cambiarle el monto — eso va aparte.",
+          "A reversal keeps the original payment visible but stops it from counting. It does " +
+          "not change the amount; that is a separate action.",
       },
       {
         capability: "payment:edit",
-        label: "Corregir una transacción ya registrada",
+        label: "Correct a recorded transaction",
         hint:
-          "Reescribe el monto o la fecha de un pago en su lugar, en vez de reversarlo. " +
-          "La cifra anterior sobrevive solo en el historial, así que es más confianza " +
-          "que reversar. Exige escribir un motivo.",
+          "Replaces a payment's amount or date instead of reversing it. The previous value " +
+          "remains only in the activity history, so this requires more trust than a reversal. " +
+          "A reason is required.",
       },
       {
         capability: "price:change",
-        label: "Cambiar el precio de un lote con contrato",
-        hint: "Exige escribir un motivo, que queda en el historial.",
+        label: "Change the price of a lot with a contract",
+        hint: "A reason is required and saved in the activity history.",
       },
       {
         capability: "rate:edit",
-        label: "Cambiar la tasa de cambio",
-        hint: "Solo afecta lo que se muestra en pantalla, nunca un saldo.",
+        label: "Change the exchange rate",
+        hint: "Only affects what is shown on screen, never a balance.",
       },
     ],
   },
   {
     title: "Control",
-    description: "Ver lo que ha pasado en el sistema.",
+    description: "Review activity in the system.",
     items: [
       {
         capability: "audit:view",
-        label: "Ver el historial",
-        hint: "Quién cambió qué, cuándo y por qué.",
+        label: "View activity history",
+        hint: "Who changed what, when, and why.",
       },
     ],
   },
@@ -162,7 +161,7 @@ export function PermissionsPage({ onSaved }: PermissionsPageProps) {
       })
       .catch((caught: unknown) =>
         setLoadError(
-          caught instanceof Error ? caught.message : "No se pudieron cargar los permisos.",
+          caught instanceof Error ? caught.message : "Could not load permissions.",
         ),
       );
   }, []);
@@ -211,7 +210,7 @@ export function PermissionsPage({ onSaved }: PermissionsPageProps) {
       setSavedAt(Date.now());
       onSaved();
     } catch (caught) {
-      setSaveError(caught instanceof Error ? caught.message : "No se pudieron guardar los cambios.");
+      setSaveError(caught instanceof Error ? caught.message : "Could not save the changes.");
     } finally {
       setSaving(false);
     }
@@ -231,7 +230,7 @@ export function PermissionsPage({ onSaved }: PermissionsPageProps) {
     return (
       <section className="panel active">
         <div className="card">
-          <p className="state-message">Cargando permisos…</p>
+          <p className="state-message">Loading permissions…</p>
         </div>
       </section>
     );
@@ -263,10 +262,10 @@ export function PermissionsPage({ onSaved }: PermissionsPageProps) {
       : [
           ...GROUPS,
           {
-            title: "Otros permisos",
+            title: "Other permissions",
             description:
-              "Permisos que el servidor ofrece y que esta pantalla todavía no sabe describir. " +
-              "Funcionan igual; solo les falta un nombre en español.",
+              "Permissions provided by the server that this screen does not describe yet. " +
+              "They work normally but need a display name.",
             items: undescribed.map((row) => ({
               capability: row.capability,
               label: row.capability,
@@ -278,11 +277,11 @@ export function PermissionsPage({ onSaved }: PermissionsPageProps) {
   return (
     <section className="panel active">
       <div className="card permissions-intro">
-        <h3>Qué puede hacer el {ROLE_LABELS.staff.toLowerCase()}</h3>
+        <h3>What can an {ROLE_LABELS.staff.toLowerCase()} do?</h3>
         <p>
-          Estos interruptores aplican a <strong>todas las cuentas de asociado</strong>. Los
-          cambios toman efecto de inmediato, incluso si el asociado ya tiene la aplicación
-          abierta, y quedan registrados en el Historial con tu nombre.
+          These settings apply to <strong>all associate accounts</strong>. Changes take effect
+          immediately, even if an associate already has the app open, and are recorded in the
+          activity history with your name.
         </p>
       </div>
 
@@ -318,7 +317,7 @@ export function PermissionsPage({ onSaved }: PermissionsPageProps) {
                         {item.hint && <span className="field-hint">{item.hint}</span>}
                       </span>
                       <span className={isOn ? "stamp success" : "stamp neutral"}>
-                        {isOn ? "Permitido" : "Bloqueado"}
+                        {isOn ? "Allowed" : "Blocked"}
                       </span>
                     </label>
                   </li>
@@ -330,24 +329,24 @@ export function PermissionsPage({ onSaved }: PermissionsPageProps) {
       })}
 
       <div className="card permission-locked">
-        <h3>Siempre del supervisor</h3>
+        <h3>Supervisor-only permissions</h3>
         <p className="field-hint">
-          Gestionar usuarios y editar estos permisos no se pueden ceder. Si el asociado pudiera
-          editar permisos, podría concederse todo lo demás a sí mismo — incluida la cuenta que
-          tendría que quitárselo.
+          Managing users and editing permissions cannot be delegated. If associates could edit
+          permissions, they could grant themselves every other permission — including the one
+          needed to remove it.
         </p>
       </div>
 
       <div className="permission-actions">
         {saveError && <p className="form-error">{saveError}</p>}
-        {savedAt !== null && !isDirty && <p className="field-hint">Cambios guardados.</p>}
+        {savedAt !== null && !isDirty && <p className="field-hint">Changes saved.</p>}
         <button
           type="button"
           className="btn-primary"
           disabled={!isDirty || isSaving}
           onClick={() => void handleSave()}
         >
-          {isSaving ? "Guardando…" : "Guardar permisos"}
+          {isSaving ? "Saving…" : "Save permissions"}
         </button>
       </div>
     </section>

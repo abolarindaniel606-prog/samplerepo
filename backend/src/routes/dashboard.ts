@@ -284,14 +284,14 @@ function scheduleStands(row: ContractRow, month: string): boolean {
  * length caps are here to keep this a settings row rather than a place to park
  * arbitrary data.
  */
-const sectionId = z.string().regex(/^[a-z][a-z0-9-]{0,39}$/, "Identificador inválido.");
+const sectionId = z.string().regex(/^[a-z][a-z0-9-]{0,39}$/, "Invalid identifier.");
 
 /** No duplicates: an id twice in the order would render the same band twice. */
 const uniqueSections = z
   .array(sectionId)
   .max(40)
   .refine((ids) => new Set(ids).size === ids.length, {
-    message: "La lista no puede repetir una sección.",
+    message: "The list cannot contain the same section more than once.",
   });
 
 const layoutBody = z.object({
@@ -307,7 +307,7 @@ const dashboardQuery = z.object({
   /** Which month to report. Defaults to the one we are living in. */
   month: z
     .string()
-    .regex(/^\d{4}-(?:0[1-9]|1[0-2])$/, "El mes debe tener el formato AAAA-MM.")
+    .regex(/^\d{4}-(?:0[1-9]|1[0-2])$/, "The month must use the YYYY-MM format.")
     .optional(),
 });
 
@@ -339,7 +339,7 @@ export const dashboardRoutes: FastifyPluginAsync<DashboardRoutesOptions> = async
     if (!parsed.success) {
       return reply.code(400).send({
         error: "invalid_query",
-        message: parsed.error.issues[0]?.message ?? "Parámetros inválidos.",
+        message: parsed.error.issues[0]?.message ?? "Invalid parameters.",
       });
     }
 
@@ -355,7 +355,7 @@ export const dashboardRoutes: FastifyPluginAsync<DashboardRoutesOptions> = async
       // like a business which has stopped selling.
       return reply.code(400).send({
         error: "future_month",
-        message: "Todavía no hay nada que reportar de un mes que no ha llegado.",
+        message: "There is nothing to report for a month that has not started yet.",
       });
     }
 
@@ -668,7 +668,7 @@ export const dashboardRoutes: FastifyPluginAsync<DashboardRoutesOptions> = async
       .sort(
         (a, b) =>
           b.collectedCents - a.collectedCents ||
-          a.projectName.localeCompare(b.projectName, "es"),
+          a.projectName.localeCompare(b.projectName, "en"),
       );
 
     /* ---------------------------------------------------------------------- */
@@ -840,7 +840,7 @@ export const dashboardRoutes: FastifyPluginAsync<DashboardRoutesOptions> = async
          * eight rows and never into seven or nine.
          */
         payments: [...monthPayments].sort(
-          (a, b) => b.paidOn.localeCompare(a.paidOn) || a.customerName.localeCompare(b.customerName, "es"),
+          (a, b) => b.paidOn.localeCompare(a.paidOn) || a.customerName.localeCompare(b.customerName, "en"),
         ),
         signed: [...signedThisMonth]
           .sort(
@@ -933,7 +933,7 @@ export const dashboardRoutes: FastifyPluginAsync<DashboardRoutesOptions> = async
     if (!parsed.success) {
       return reply.code(400).send({
         error: "invalid_body",
-        message: parsed.error.issues[0]?.message ?? "No se pudo guardar el orden.",
+        message: parsed.error.issues[0]?.message ?? "Could not save the order.",
       });
     }
 

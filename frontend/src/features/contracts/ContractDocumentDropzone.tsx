@@ -155,7 +155,7 @@ export function ContractDocumentDropzone({
    * exactly like a dropped one.
    */
   const pickFromDrive = async () => {
-    setDriveBusy("Abriendo Google Drive…");
+    setDriveBusy("Opening Google Drive…");
 
     try {
       const { files: picked, rejections } = await pickContractFilesFromDrive(setDriveBusy);
@@ -166,7 +166,7 @@ export function ContractDocumentDropzone({
 
       accept(picked);
     } catch (caught) {
-      onReject(caught instanceof Error ? caught.message : "No se pudo abrir Google Drive.");
+      onReject(caught instanceof Error ? caught.message : "Could not open Google Drive.");
     } finally {
       setDriveBusy(null);
     }
@@ -193,10 +193,10 @@ export function ContractDocumentDropzone({
         }`}
         {...dropHandlers}
       >
-        <p className="proof-dropzone-title">Arrastra el contrato firmado aquí</p>
+        <p className="proof-dropzone-title">Drop the signed contract here</p>
         <p className="proof-dropzone-hint">
-          El PDF o el escaneo de lo que se firmó. También imágenes, hasta 30 MB. Se guarda junto
-          al contrato en cuanto se crea.
+          Upload the signed PDF or scan. Images are also accepted, up to 30 MB. It will be saved
+          with the contract as soon as it is created.
         </p>
 
         <div className="proof-dropzone-actions">
@@ -206,7 +206,7 @@ export function ContractDocumentDropzone({
             disabled={disabled || isFull}
             onClick={() => inputRef.current?.click()}
           >
-            Elegir archivo
+            Choose file
           </button>
 
           {/* Left out entirely where no Google credentials were configured —
@@ -218,7 +218,7 @@ export function ContractDocumentDropzone({
               disabled={disabled || isFull || driveBusy !== null}
               onClick={() => void pickFromDrive()}
             >
-              Desde Google Drive
+              From Google Drive
             </button>
           )}
         </div>
@@ -252,7 +252,7 @@ export function ContractDocumentDropzone({
                 type="button"
                 className="proof-open"
                 onClick={() => setViewing(entry.id)}
-                title="Ver este documento"
+                title="View this document"
                 aria-label={`Ver ${entry.file.name}`}
               >
                 <DocumentThumb file={viewerFiles[at]!} />

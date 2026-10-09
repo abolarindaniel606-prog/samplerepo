@@ -120,7 +120,7 @@ export async function buildApp(config: AppConfig, db: Db) {
 
     return reply.code(500).send({
       error: "server_error",
-      message: "No se pudo completar la operación. Vuelve a intentarlo o avisa a soporte.",
+      message: "The operation could not be completed. Try again or contact support.",
     });
   });
 

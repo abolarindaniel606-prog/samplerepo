@@ -101,21 +101,21 @@ export function describeUndeliveredShare(
 ): string {
   const headline =
     outcome.status === "failed"
-      ? "No se pudo leer lo que compartiste."
+      ? "Could not read the shared item."
       : outcome.status === "missing"
-        ? "Lo compartido llegó, pero ya no estaba guardado al abrir Lindero."
+        ? "The shared file arrived but was no longer available when Lindero opened."
         : outcome.status === "unreadable"
-          ? "Lo compartido llegó, pero este teléfono no dejó leerlo."
-          : "Lo compartido llegó a Lindero sin la imagen.";
+          ? "The shared file arrived, but this phone could not read it."
+          : "The shared file arrived without an image.";
 
   const details = [
-    received ? `recibido: ${received}` : null,
-    outcome.status === "unreadable" ? `error: ${outcome.detail}` : null,
+    received ? `Received: ${received}` : null,
+    outcome.status === "unreadable" ? `Error: ${outcome.detail}` : null,
   ].filter((part): part is string => part !== null);
 
   return (
-    `${headline} Adjunta el comprobante aquí abajo.` +
-    (details.length > 0 ? ` (Detalle: ${details.join(" — ")})` : "")
+    `${headline} Attach the payment proof below.` +
+    (details.length > 0 ? ` (Details: ${details.join(" — ")})` : "")
   );
 }
 

@@ -55,7 +55,7 @@ export const permissionRoutes: FastifyPluginAsync = async (app) => {
       if (!parsed.success) {
         return reply.code(400).send({
           error: "invalid_body",
-          message: "No se pudo leer la lista de permisos.",
+          message: "Could not read the permissions list.",
         });
       }
 
@@ -65,7 +65,7 @@ export const permissionRoutes: FastifyPluginAsync = async (app) => {
       if (unknown.length > 0) {
         return reply.code(400).send({
           error: "unknown_capability",
-          message: `Permiso desconocido: ${unknown.join(", ")}.`,
+          message: `Unknown permission: ${unknown.join(", ")}.`,
         });
       }
 
@@ -80,8 +80,8 @@ export const permissionRoutes: FastifyPluginAsync = async (app) => {
         return reply.code(400).send({
           error: "locked_capability",
           message:
-            "Gestionar usuarios, editar permisos y declarar un contrato incumplido son " +
-            "exclusivos del supervisor y no se pueden ceder.",
+            "Managing users, editing permissions, and declaring a contract in default are " +
+            "reserved for supervisors and cannot be delegated.",
         });
       }
 

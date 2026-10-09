@@ -15,33 +15,33 @@ import type { Cents, MoneyView } from "../../lib/money";
  * Greenwich, Honduras included.
  */
 const MONTH_NAMES = [
-  "enero",
-  "febrero",
-  "marzo",
-  "abril",
-  "mayo",
-  "junio",
-  "julio",
-  "agosto",
-  "septiembre",
-  "octubre",
-  "noviembre",
-  "diciembre",
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
 ];
 
 const MONTH_ABBREVIATIONS = [
-  "ene",
-  "feb",
-  "mar",
-  "abr",
-  "may",
-  "jun",
-  "jul",
-  "ago",
-  "sep",
-  "oct",
-  "nov",
-  "dic",
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
 ];
 
 function monthIndex(month: string): number {
@@ -122,14 +122,14 @@ export function compareToPrevious(current: number, previous: number): Delta {
   if (previous === 0) {
     return {
       tone: current > 0 ? "up" : "flat",
-      label: current > 0 ? "sin comparación" : "sin cambio",
+      label: current > 0 ? "no comparison" : "no change",
     };
   }
 
   const change = Math.round(((current - previous) / previous) * 100);
 
   if (change === 0) {
-    return { tone: "flat", label: "sin cambio" };
+    return { tone: "flat", label: "no change" };
   }
 
   // A true minus sign, not a hyphen: these sit beside figures, and a hyphen at
@@ -157,16 +157,16 @@ export function describeComparison(previousMonth: string, comparisonDays: number
   const name = formatMonthName(previousMonth);
 
   if (comparisonDays >= daysInMonth(previousMonth)) {
-    return `frente a ${name}`;
+    return `compared with ${name}`;
   }
 
   // "los primeros 1 días" is what a template gets you on the first of the month,
   // which is exactly the day this sentence is read most.
   if (comparisonDays === 1) {
-    return `frente al primer día de ${name}`;
+    return `compared with the first day of ${name}`;
   }
 
-  return `frente a los primeros ${comparisonDays} días de ${name}`;
+  return `compared with the first ${comparisonDays} days of ${name}`;
 }
 
 /**
@@ -234,14 +234,14 @@ export function describeExpiry(expiresOn: string, asOf: string): string {
   const days = daysBetween(asOf, expiresOn);
 
   if (days === 0) {
-    return "vence hoy";
+    return "due today";
   }
 
   if (days < 0) {
-    return `venció hace ${pluralise(Math.abs(days), "día", "días")}`;
+    return `overdue by ${pluralise(Math.abs(days), "day", "days")}`;
   }
 
-  return `vence en ${pluralise(days, "día", "días")}`;
+  return `due in ${pluralise(days, "day", "days")}`;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -255,7 +255,7 @@ export function shortDay(isoDate: string): string {
   // `timeZone: "UTC"` against a UTC-constructed date, for the reason at the top
   // of this file: without it the formatter reads midnight UTC in the device's
   // own zone and prints the day before, all through the Americas.
-  return new Intl.DateTimeFormat("es-HN", {
+  return new Intl.DateTimeFormat("en-HN", {
     day: "numeric",
     month: "short",
     timeZone: "UTC",
@@ -263,9 +263,9 @@ export function shortDay(isoDate: string): string {
 }
 
 export const PAYMENT_METHOD_LABELS: Record<string, string> = {
-  cash: "Efectivo",
-  transfer: "Transferencia",
-  card: "Tarjeta",
+  cash: "Cash",
+  transfer: "Transfer",
+  card: "Card",
 };
 
 /**
@@ -326,6 +326,6 @@ export function groupPayers<T extends PayerPayment>(payments: readonly T[]): Arr
   }
 
   return [...byCustomer.values()].sort(
-    (a, b) => b.totalCents - a.totalCents || a.customerName.localeCompare(b.customerName, "es"),
+    (a, b) => b.totalCents - a.totalCents || a.customerName.localeCompare(b.customerName, "en"),
   );
 }

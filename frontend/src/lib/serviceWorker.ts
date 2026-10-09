@@ -56,7 +56,7 @@ export function registerServiceWorker(): void {
         // Registration is best-effort. A failure here means no install prompt,
         // not a broken app, so it is logged for a developer and never surfaced
         // to whoever is trying to write a receipt.
-        console.warn("No se pudo registrar el service worker:", error);
+        console.warn("Could not register the service worker:", error);
       });
   });
 }

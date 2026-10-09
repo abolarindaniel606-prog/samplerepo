@@ -150,7 +150,7 @@ export function ContractToolbar({
   const filterBody = (
     <>
       <div className="filter-section">
-        <p className="menu-title">Estado de pago</p>
+        <p className="menu-title">Payment status</p>
         {HEALTH_ORDER.map((health) => (
           <label key={health} className="filter-check">
             <input
@@ -162,12 +162,12 @@ export function ContractToolbar({
           </label>
         ))}
         <span className="field-hint">
-          Se calcula con los pagos registrados, cinco días de gracia y dos meses para el riesgo.
+          Calculated from recorded payments, with a five-day grace period and a two-month risk window.
         </span>
       </div>
 
       <div className="filter-section">
-        <p className="menu-title">Situación del contrato</p>
+        <p className="menu-title">Contract status</p>
         {STATUS_ORDER.map((status) => (
           <label key={status} className="filter-check">
             <input
@@ -180,8 +180,8 @@ export function ContractToolbar({
         ))}
         {/* The one filter that starts switched on, so it says why. */}
         <span className="field-hint">
-          Nada se elimina en Lindero: los contratos cancelados siguen aquí. La lista abre en
-          vigentes para que sea la cartera viva.
+          Nothing is deleted in Lindero: cancelled contracts remain here. The list opens to active
+          contracts so it shows the current portfolio.
         </span>
       </div>
 
@@ -210,8 +210,8 @@ export function ContractToolbar({
       </div>
 
       <div className="filter-section">
-        <p className="menu-title">Proyecto</p>
-        {projectNames.length === 0 && <p className="field-hint">Todavía no hay contratos.</p>}
+        <p className="menu-title">Project</p>
+        {projectNames.length === 0 && <p className="field-hint">There are no contracts yet.</p>}
         {projectNames.map((name) => (
           <label key={name} className="filter-check">
             <input
@@ -233,9 +233,9 @@ export function ContractToolbar({
               onFiltersChange({ ...filters, onlyWithBalance: !filters.onlyWithBalance })
             }
           />
-          <span>Solo con saldo pendiente</span>
+          <span>Outstanding balances only</span>
         </label>
-        <span className="field-hint">Esconde los contratos que ya no deben nada.</span>
+        <span className="field-hint">Hide contracts that have been paid in full.</span>
       </div>
     </>
   );
@@ -261,8 +261,8 @@ export function ContractToolbar({
             aria-expanded={allGroupsExpanded}
             title={
               allGroupsExpanded
-                ? "Colapsar los clientes con más de un contrato"
-                : "Expandir los clientes con más de un contrato"
+                ? "Collapse customers with multiple contracts"
+                : "Expand customers with multiple contracts"
             }
           >
             <IconChevronDown />
@@ -276,9 +276,9 @@ export function ContractToolbar({
           <input
             type="search"
             value={search}
-            placeholder="Buscar contrato, cliente o lote…"
-            aria-label="Buscar contrato"
-            title="Busca por número de contrato, cliente, teléfono, lote, proyecto o notas"
+            placeholder="Search contracts, customers, or lots…"
+            aria-label="Search contracts"
+            title="Search by contract number, customer, phone, lot, project, or notes"
             onChange={(event) => onSearchChange(event.target.value)}
           />
         </div>
@@ -302,7 +302,7 @@ export function ContractToolbar({
 
           <MenuSurface
             isOpen={openMenu === "sort"}
-            title="Ordenar por"
+            title="Sort by"
             onClose={() => setOpenMenu(null)}
             className="sort-popover"
           >
@@ -330,7 +330,7 @@ export function ContractToolbar({
 
           <MenuSurface
             isOpen={openMenu === "filter"}
-            title="Filtros"
+            title="Filters"
             onClose={() => setOpenMenu(null)}
             className="filter-popover"
             footer={

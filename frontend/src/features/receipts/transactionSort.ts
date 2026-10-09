@@ -36,14 +36,14 @@ export const SORT_OPTIONS: Array<{
 }> = [
   {
     field: "date",
-    label: "Fecha del pago",
-    ascLabel: "Más antiguos primero",
-    descLabel: "Más recientes primero",
+    label: "Payment date",
+    ascLabel: "Oldest first",
+    descLabel: "Newest first",
   },
-  { field: "customer", label: "Cliente", ascLabel: "A → Z", descLabel: "Z → A" },
-  { field: "amount", label: "Monto", ascLabel: "Menor a mayor", descLabel: "Mayor a menor" },
-  { field: "lot", label: "Lote", ascLabel: "A → Z", descLabel: "Z → A" },
-  { field: "project", label: "Proyecto", ascLabel: "A → Z", descLabel: "Z → A" },
+  { field: "customer", label: "Customer", ascLabel: "A → Z", descLabel: "Z → A" },
+  { field: "amount", label: "Amount", ascLabel: "Lowest first", descLabel: "Highest first" },
+  { field: "lot", label: "Lot", ascLabel: "A → Z", descLabel: "Z → A" },
+  { field: "project", label: "Project", ascLabel: "A → Z", descLabel: "Z → A" },
 ];
 
 /**
@@ -119,14 +119,14 @@ function compareTransactionField(a: Transaction, b: Transaction, rule: SortRule<
   const raw = ((): number => {
     switch (rule.field) {
       case "customer":
-        return a.customerName.localeCompare(b.customerName, "es");
+        return a.customerName.localeCompare(b.customerName, "en");
       case "amount":
         return a.amount - b.amount;
       case "project":
-        return a.projectName.localeCompare(b.projectName, "es");
+        return a.projectName.localeCompare(b.projectName, "en");
       case "lot":
       default:
-        return a.lotCode.localeCompare(b.lotCode, "es");
+        return a.lotCode.localeCompare(b.lotCode, "en");
     }
   })();
 
@@ -245,7 +245,7 @@ export function groupByCustomer(
       }
     }
     group.byContract = [...byContract.values()].sort((a, b) =>
-      a.contractCode.localeCompare(b.contractCode, "es"),
+      a.contractCode.localeCompare(b.contractCode, "en"),
     );
     group.hasAmendment = group.byContract.some((entry) => entry.contractStatus === "replaced");
 
@@ -265,7 +265,7 @@ export function groupByCustomer(
     const raw = ((): number => {
       switch (rule.field) {
         case "customer":
-          return a.customerName.localeCompare(b.customerName, "es");
+          return a.customerName.localeCompare(b.customerName, "en");
         case "amount":
           return a.totalCents - b.totalCents;
         case "date":
@@ -288,7 +288,7 @@ export function groupByCustomer(
     // reads as an order that means something.
     return (
       result ||
-      a.customerName.localeCompare(b.customerName, "es") ||
+      a.customerName.localeCompare(b.customerName, "en") ||
       a.customerId.localeCompare(b.customerId)
     );
   });

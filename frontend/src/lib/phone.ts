@@ -81,7 +81,7 @@ export function formatPhone(phone: string): string {
  *
  * A stored number whose country code is not in the list below is NOT quietly
  * reassigned to Honduras — it keeps every digit it has and is shown under
- * "Otro país", where the user can see and correct it. Silently adopting a
+ * "Other country", where the user can see and correct it. Silently adopting a
  * foreign number as a local one is the failure that sends a receipt to a
  * stranger.
  */
@@ -104,7 +104,7 @@ export interface CountryCode {
  * The countries this business actually deals with, Honduras first.
  *
  * Deliberately short. A picker with every country on earth is slower to use
- * than typing, and the honest fallback for anywhere else is "Otro país", which
+ * than typing, and the honest fallback for anywhere else is "Other country", which
  * accepts the full international number as written.
  */
 export const COUNTRY_CODES: readonly CountryCode[] = [
@@ -113,11 +113,11 @@ export const COUNTRY_CODES: readonly CountryCode[] = [
   { dial: "+503", label: "El Salvador", nationalDigits: null },
   { dial: "+505", label: "Nicaragua", nationalDigits: null },
   { dial: "+506", label: "Costa Rica", nationalDigits: null },
-  { dial: "+507", label: "Panamá", nationalDigits: null },
-  { dial: "+1", label: "EE. UU. / Canadá", nationalDigits: null },
-  { dial: "+52", label: "México", nationalDigits: null },
-  { dial: "+34", label: "España", nationalDigits: null },
-  { dial: OTHER_DIAL, label: "Otro país", nationalDigits: null },
+  { dial: "+507", label: "Panama", nationalDigits: null },
+  { dial: "+1", label: "US / Canada", nationalDigits: null },
+  { dial: "+52", label: "Mexico", nationalDigits: null },
+  { dial: "+34", label: "Spain", nationalDigits: null },
+  { dial: OTHER_DIAL, label: "Other country", nationalDigits: null },
 ];
 
 /** The default for a new customer: the country the land is in. */
@@ -134,7 +134,7 @@ export interface PhoneParts {
  *
  * Longest dial code wins, so "+1" never claims a "+1..." that is really
  * something else, and a number under an unknown code lands whole under
- * "Otro país" rather than losing its first digits.
+ * "Other country" rather than losing its first digits.
  */
 export function splitPhone(phone: string): PhoneParts {
   const digits = phone.replace(/\D/g, "");
@@ -177,11 +177,11 @@ export function describePhoneProblem(dialCode: string, national: string): string
   const country = COUNTRY_CODES.find((entry) => entry.dial === dialCode);
 
   if (country?.nationalDigits && digits.length !== country.nationalDigits) {
-    return `Un número de ${country.label} tiene ${country.nationalDigits} dígitos.`;
+    return `A number from ${country.label} must have ${country.nationalDigits} digits.`;
   }
 
   // The generic E.164 bounds, for everywhere the list is not strict about.
   return normalizePhone(joinPhone(dialCode, digits)) === null
-    ? "Ese número no tiene una cantidad de dígitos válida."
+    ? "That number does not have a valid number of digits."
     : null;
 }

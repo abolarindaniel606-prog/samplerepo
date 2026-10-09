@@ -26,7 +26,7 @@ export function DraftNotice({ savedAt, missing, onRestore, onDiscard }: DraftNot
   return (
     <div className="draft-notice full-width">
       <div className="draft-notice-text">
-        <p className="draft-notice-title">Quedó algo a medio escribir {draftAge(savedAt)}.</p>
+        <p className="draft-notice-title">You have an unfinished draft {draftAge(savedAt)}.</p>
         {missing && <p className="draft-notice-missing">{missing}</p>}
       </div>
 

@@ -246,7 +246,7 @@ export function DashboardPage({
     } catch (caught) {
       // The arrangement stays on screen and the editor stays open, so nothing
       // somebody just spent a minute on is lost to a dropped connection.
-      setError(caught instanceof Error ? caught.message : "No se pudo guardar el orden.");
+      setError(caught instanceof Error ? caught.message : "Could not save the layout.");
     } finally {
       setSaving(false);
     }
@@ -261,7 +261,7 @@ export function DashboardPage({
       setLayout(resolveLayout(null));
       setDraft(null);
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "No se pudo restaurar el orden.");
+      setError(caught instanceof Error ? caught.message : "Could not restore the layout.");
     } finally {
       setSaving(false);
     }
@@ -283,7 +283,7 @@ export function DashboardPage({
     income: (
         <div className="dash-headline">
           <div className="card dash-hero">
-            <p className="dash-hero-label">Cobrado en {formatMonthName(data.month)}</p>
+            <p className="dash-hero-label">Collected in {formatMonthName(data.month)}</p>
             <p className="dash-hero-value">{formatMoney(income.collectedCents, money)}</p>
 
             <p className="dash-hero-meta">
@@ -298,7 +298,7 @@ export function DashboardPage({
             */}
             {rate === null ? (
               <p className="dash-hero-rate is-quiet">
-                No había cuotas programadas para {formatMonthName(data.month)}.
+                No installments were scheduled for {formatMonthName(data.month)}.
               </p>
             ) : (
               <div className="dash-hero-rate">
@@ -306,8 +306,8 @@ export function DashboardPage({
                   <span className={meterClass(rate)} style={{ width: `${Math.min(100, rate)}%` }} />
                 </div>
                 <p>
-                  <strong>{rate} %</strong> de los {formatMoney(income.expectedCents, money)}{" "}
-                  programados para el mes
+                  <strong>{rate}%</strong> of {formatMoney(income.expectedCents, money)}{" "}
+                  scheduled for the month
                 </p>
               </div>
             )}
@@ -315,16 +315,16 @@ export function DashboardPage({
 
           <div className="dash-tiles">
             <StatTile
-              label={data.isCurrentMonth ? "Por cobrar este mes" : "Quedó por cobrar"}
+              label={data.isCurrentMonth ? "Due this month" : "Still due"}
               value={formatMoney(income.stillDueCents, money)}
               detail={
                 income.stillDueContracts === 0
-                  ? "Todo al día"
+                  ? "All caught up"
                   : `${pluralise(
                       income.stillDueContracts,
-                      "contrato",
-                      "contratos",
-                    )} con saldo del mes`
+                      "contract",
+                      "contracts",
+                    )} with a balance due this month`
               }
               tone={income.stillDueCents > 0 ? "warn" : "good"}
               action={
@@ -350,13 +350,13 @@ export function DashboardPage({
                           onShowContracts({ health: BEHIND_HEALTH });
                         }
                       },
-                      hint: "Ver el desglose de la cobranza",
+                      hint: "View the collection breakdown",
                     }
               }
             />
 
             <StatTile
-              label="Clientes que pagaron"
+              label="Customers who paid"
               value={String(income.payingCustomers)}
               detail={`${payersDelta.label} ${comparison}`}
               action={
@@ -364,26 +364,26 @@ export function DashboardPage({
                   ? undefined
                   : {
                       onClick: () => setOpenTile((current) => (current === "payers" ? null : "payers")),
-                      hint: "Ver quiénes pagaron",
+                      hint: "See who paid",
                       isOpen: openTile === "payers",
                     }
               }
             />
 
             <StatTile
-              label="Contratos nuevos"
+              label="New contracts"
               value={String(income.signedCount)}
               detail={
                 income.signedCount === 0
-                  ? "Ninguno firmado"
-                  : `${formatMoney(income.signedValueCents, money)} en ventas`
+                  ? "None signed"
+                  : `${formatMoney(income.signedValueCents, money)} in sales`
               }
               action={
                 income.signedCount === 0
                   ? undefined
                   : {
                       onClick: () => setOpenTile((current) => (current === "signed" ? null : "signed")),
-                      hint: "Ver los contratos firmados",
+                      hint: "View signed contracts",
                       isOpen: openTile === "signed",
                     }
               }
@@ -415,8 +415,8 @@ export function DashboardPage({
     history: (
         <div className="card dash-card">
           <div className="card-head">
-            <h3>Cobrado mes a mes</h3>
-            <span className="tag">últimos 12 meses</span>
+            <h3>Monthly collections</h3>
+            <span className="tag">last 12 months</span>
           </div>
 
           <div className="dash-card-body">
@@ -427,15 +427,15 @@ export function DashboardPage({
                 targetCents: row.expectedCents,
               }))}
               money={money}
-              valueLabel="Cobrado"
-              targetLabel="Programado"
+              valueLabel="Collected"
+              targetLabel="Scheduled"
               selectedMonth={data.month}
               onSelectMonth={onSelectMonth}
-              tableCaption="Cobrado y programado por mes, últimos doce meses."
+              tableCaption="Monthly collections and scheduled payments for the last twelve months."
             />
             <p className="dash-note">
-              Toca un mes para ver todo el panel de ese período. El mes de un pago es el día en que
-              se recibió el dinero, no el día en que se registró.
+              Select a month to view its full dashboard. A payment belongs to the month when the
+              money was received, not when it was recorded.
             </p>
           </div>
         </div>
@@ -444,7 +444,7 @@ export function DashboardPage({
     composition: (
         <div className="card dash-card">
           <div className="card-head">
-            <h3>De dónde vino el dinero</h3>
+            <h3>Where the money came from</h3>
             <span className="tag">{formatMonthName(data.month)}</span>
           </div>
 
@@ -459,20 +459,20 @@ export function DashboardPage({
               money={money}
               total={income.collectedCents}
               rows={[
-                { label: "Cuotas", amount: income.byType.installment },
-                { label: "Primas", amount: income.byType.downPayment },
-                { label: "Contados", amount: income.byType.fullPayment },
-                { label: "Ajustes", amount: income.byType.adjustment },
+                { label: "Installments", amount: income.byType.installment },
+                { label: "Down payments", amount: income.byType.downPayment },
+                { label: "Cash sales", amount: income.byType.fullPayment },
+                { label: "Adjustments", amount: income.byType.adjustment },
               ]}
             />
             <Split
-              title="Por forma de pago"
+              title="By payment method"
               money={money}
               total={income.collectedCents}
               rows={[
-                { label: "Efectivo", amount: income.byMethod.cash },
-                { label: "Transferencia", amount: income.byMethod.transfer },
-                { label: "Tarjeta", amount: income.byMethod.card },
+                { label: "Cash", amount: income.byMethod.cash },
+                { label: "Transfer", amount: income.byMethod.transfer },
+                { label: "Card", amount: income.byMethod.card },
               ]}
             />
           </div>
@@ -482,14 +482,14 @@ export function DashboardPage({
     collections: (
         <div className="card dash-card">
           <div className="card-head">
-            <h3>Cobranza</h3>
+            <h3>Collections</h3>
             <span className="tag">
-              al {formatDate(data.asOf)}
+              as of {formatDate(data.asOf)}
               {collections.settledContracts > 0 &&
                 ` · ${pluralise(
                   collections.settledContracts,
-                  "contrato pagado",
-                  "contratos pagados",
+                  "paid contract",
+                  "paid contracts",
                 )}`}
             </span>
           </div>
@@ -526,7 +526,7 @@ export function DashboardPage({
     worklist: (
         <div className="card dash-card">
           <div className="card-head">
-            <h3>A quién llamar primero</h3>
+            <h3>Who to call first</h3>
             {/*
               The count says out loud that this is a RANKING and not a census.
               The list is capped at twelve by the server; a heading that read
@@ -538,23 +538,23 @@ export function DashboardPage({
             */}
             <span className="tag">
               {behindTotal > collections.worklist.length
-                ? `${collections.worklist.length} de ${behindTotal} · por monto vencido`
-                : "por monto vencido"}
+                ? `${collections.worklist.length} of ${behindTotal} · by overdue amount`
+                : "by overdue amount"}
             </span>
           </div>
 
           {collections.worklist.length === 0 ? (
-            <p className="state-message">Nadie está atrasado. Toda la cartera está al día.</p>
+            <p className="state-message">No one is overdue. All accounts are current.</p>
           ) : (
             <div className="table-wrap">
               <table className="dash-table">
                 <thead>
                   <tr>
-                    <th>Cliente</th>
-                    <th>Lote</th>
-                    <th className="col-money">Vencido</th>
-                    <th className="col-money">Saldo</th>
-                    <th>Último pago</th>
+                    <th>Customer</th>
+                    <th>Lot</th>
+                    <th className="col-money">Overdue</th>
+                    <th className="col-money">Balance</th>
+                    <th>Last payment</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -583,7 +583,7 @@ export function DashboardPage({
                       <td className="col-money">
                         {moneyCell(debtor.arrearsCents, "is-balance")}
                         <span className="cell-sub">
-                          {pluralise(debtor.monthsBehind, "mes", "meses")}
+                          {pluralise(debtor.monthsBehind, "month", "months")}
                         </span>
                       </td>
                       <td className="col-money">{moneyCell(debtor.balanceCents)}</td>
@@ -610,8 +610,8 @@ export function DashboardPage({
                 className="dash-drill-link"
                 onClick={() => onShowContracts({ health: BEHIND_HEALTH })}
               >
-                Ver {behindTotal === 1 ? "el contrato atrasado" : `los ${behindTotal} atrasados`} en
-                Contratos
+                View {behindTotal === 1 ? "the overdue contract" : `all ${behindTotal} overdue contracts`} in
+                Contracts
               </button>
             </div>
           )}
@@ -621,22 +621,22 @@ export function DashboardPage({
     projects: (
         <div className="card dash-card">
           <div className="card-head">
-            <h3>Por proyecto</h3>
+            <h3>By project</h3>
             <span className="tag">{formatMonthName(data.month)}</span>
           </div>
 
           {data.projects.length === 0 ? (
-            <p className="state-message">Todavía no hay contratos en ningún proyecto.</p>
+            <p className="state-message">There are no contracts in any project yet.</p>
           ) : (
             <div className="table-wrap">
               <table className="dash-table">
                 <thead>
                   <tr>
-                    <th>Proyecto</th>
-                    <th className="col-money">Cobrado</th>
-                    <th className="col-money">Por cobrar</th>
-                    <th>Cartera</th>
-                    <th>Inventario</th>
+                    <th>Project</th>
+                    <th className="col-money">Collected</th>
+                    <th className="col-money">Due</th>
+                    <th>Portfolio</th>
+                    <th>Inventory</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -689,12 +689,12 @@ export function DashboardPage({
                           {pluralise(project.activeContracts, "contrato", "contratos")}
                           {project.behindContracts > 0 && (
                             <span className="cell-sub warn">
-                              {project.behindContracts} atrasados
+                              {project.behindContracts} overdue
                             </span>
                           )}
                         </td>
                         <td>
-                          {project.lotsAvailable} de {project.lotsTotal} libres
+                          {project.lotsAvailable} of {project.lotsTotal} available
                           {/*
                             The one thing the Proyectos tab deliberately does not
                             show: not what is left, but how long it lasts at the
@@ -703,9 +703,9 @@ export function DashboardPage({
                           <span className="cell-sub">
                             {project.monthsOfStock === null
                               ? project.lotsAvailable === 0
-                                ? "sin lotes libres"
-                                : "sin ventas recientes"
-                              : `~${pluralise(project.monthsOfStock, "mes", "meses")} de inventario`}
+                                ? "no available lots"
+                                : "no recent sales"
+                              : `~${pluralise(project.monthsOfStock, "month", "months")} of inventory`}
                           </span>
                         </td>
                       </tr>
@@ -722,18 +722,18 @@ export function DashboardPage({
                           <td colSpan={5}>
                             {projectPayments.length === 0 ? (
                               <p className="state-message">
-                                Ningún pago registrado en {formatMonthName(data.month)} para{" "}
+                                No payments recorded in {formatMonthName(data.month)} for{" "}
                                 {project.projectName}.
                               </p>
                             ) : (
                               <table className="dash-table is-nested">
                                 <thead>
                                   <tr>
-                                    <th>Cliente</th>
-                                    <th>Lote</th>
-                                    <th>Fecha</th>
-                                    <th>Forma</th>
-                                    <th className="col-money">Monto</th>
+                                    <th>Customer</th>
+                                    <th>Lot</th>
+                                    <th>Date</th>
+                                    <th>Method</th>
+                                    <th className="col-money">Amount</th>
                                   </tr>
                                 </thead>
                                 <tbody>
@@ -773,7 +773,7 @@ export function DashboardPage({
                                 <tfoot>
                                   <tr>
                                     <th scope="row" colSpan={4}>
-                                      {pluralise(projectPayments.length, "pago", "pagos")}
+                                      {pluralise(projectPayments.length, "payment", "payments")}
                                     </th>
                                     <td className="col-money">
                                       <span className="cell-money">
@@ -800,8 +800,8 @@ export function DashboardPage({
     projection: (
         <div className="card dash-card">
           <div className="card-head">
-            <h3>Lo que viene</h3>
-            <span className="tag">próximos 6 meses</span>
+            <h3>Coming up</h3>
+            <span className="tag">next 6 months</span>
           </div>
 
           <div className="dash-card-body">
@@ -811,13 +811,12 @@ export function DashboardPage({
                 valueCents: row.expectedCents,
               }))}
               money={money}
-              valueLabel="Programado"
-              tableCaption="Cuotas programadas por mes, próximos seis meses."
+              valueLabel="Scheduled"
+              tableCaption="Monthly installments scheduled for the next six months."
             />
             <p className="dash-note">
-              Lo que las cuotas ya firmadas traerían si todo el mundo paga. Un escalón hacia abajo
-              es un grupo de contratos que termina: ese mes entra menos dinero aunque nadie se
-              atrase.
+              Expected payments if everyone pays as agreed. A drop means a group of contracts
+              will end: less money is due that month even if no one falls behind.
             </p>
           </div>
         </div>
@@ -826,9 +825,9 @@ export function DashboardPage({
     attention: (
         <div className="dash-attention">
           <AttentionCard
-            title="Reservas por vencer"
-            tag="próximos 30 días"
-            empty="Ninguna reserva vence pronto."
+            title="Reservations expiring soon"
+            tag="next 30 days"
+            empty="No reservations are expiring soon."
             items={upcoming.expiringReservations.map((row) => ({
               key: row.contractId,
               code: row.contractCode,
@@ -840,15 +839,15 @@ export function DashboardPage({
           />
 
           <AttentionCard
-            title="Contratos por terminar"
-            tag="3 cuotas o menos"
-            empty="Ningún contrato está por terminar."
+            title="Contracts nearing completion"
+            tag="3 installments or fewer"
+            empty="No contracts are nearing completion."
             items={upcoming.finishingSoon.map((row) => ({
               key: row.contractId,
               code: row.contractCode,
               title: row.customerName,
               detail: `${row.lotCode} · ${row.projectName}`,
-              note: `${pluralise(row.installmentsLeft, "cuota", "cuotas")} · ${formatMoney(
+              note: `${              pluralise(row.installmentsLeft, "installment", "installments")} · ${formatMoney(
                 row.balanceCents,
                 money,
               )}`,
@@ -858,20 +857,20 @@ export function DashboardPage({
 
           <div className="card dash-card">
             <div className="card-head">
-              <h3>Primas sin cobrar</h3>
-              <span className="tag">contratos vigentes</span>
+              <h3>Down payments outstanding</h3>
+              <span className="tag">active contracts</span>
             </div>
             <div className="dash-card-body">
               {upcoming.unpaidPrimas.contracts === 0 ? (
-                <p className="state-message">Todas las primas acordadas entraron completas.</p>
+                <p className="state-message">All agreed down payments have been paid in full.</p>
               ) : (
                 <>
                   <p className="dash-figure">
                     {formatMoney(upcoming.unpaidPrimas.amountCents, money)}
                   </p>
                   <p className="dash-figure-label">
-                    acordados y no recibidos en{" "}
-                    {pluralise(upcoming.unpaidPrimas.contracts, "contrato", "contratos")}
+                    agreed but unpaid across{" "}
+                    {pluralise(upcoming.unpaidPrimas.contracts, "contract", "contracts")}
                   </p>
                 </>
               )}
@@ -889,16 +888,16 @@ export function DashboardPage({
 
             <div className="dash-card-body">
               {data.control.byUser.length === 0 ? (
-                <p className="state-message">Nadie registró cobros este mes.</p>
+                <p className="state-message">No one recorded collections this month.</p>
               ) : (
                 <div className="table-wrap">
                   <table className="dash-table">
                     <thead>
                       <tr>
-                        <th>Quién cobró</th>
+                        <th>Collected by</th>
                         <th className="col-money">Total</th>
-                        <th className="col-money">En efectivo</th>
-                        <th>Transacciones</th>
+                        <th className="col-money">Cash</th>
+                        <th>Transactions</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -926,26 +925,26 @@ export function DashboardPage({
 
               <div className="dash-flags">
                 <div className="dash-flag">
-                  <p className="dash-flag-label">Transferencias sin comprobante</p>
+                  <p className="dash-flag-label">Transfers without proof</p>
                   <p className="dash-flag-value">
                     {data.control.unprovenTransfers.count === 0
-                      ? "Ninguna"
+                      ? "None"
                       : `${data.control.unprovenTransfers.count} · ${formatMoney(
                           data.control.unprovenTransfers.amountCents,
                           money,
                         )}`}
                   </p>
                   <p className="dash-flag-note">
-                    Sin número de confirmación ni foto del depósito: no hay con qué compararlas
-                    contra el estado de cuenta.
+                    Without a confirmation number or deposit image, there is nothing to compare
+                    against the bank statement.
                   </p>
                 </div>
 
                 <div className="dash-flag">
-                  <p className="dash-flag-label">Recibos anulados</p>
+                  <p className="dash-flag-label">Voided receipts</p>
                   <p className="dash-flag-value">
                     {data.control.voidedReceipts.length === 0
-                      ? "Ninguno"
+                      ? "None"
                       : String(data.control.voidedReceipts.length)}
                   </p>
                   {data.control.voidedReceipts.length > 0 && (
@@ -1100,9 +1099,9 @@ function LayoutBar({
     return (
       <div className="dash-layout-bar">
         <button type="button" className="chip" onClick={onEdit}>
-          Personalizar
+          Customize
         </button>
-        {!isDefault && <span className="result-count">Orden personalizado</span>}
+        {!isDefault && <span className="result-count">Custom layout</span>}
       </div>
     );
   }
@@ -1110,8 +1109,7 @@ function LayoutBar({
   return (
     <div className="dash-layout-bar is-editing">
       <p className="dash-layout-hint">
-        Arrastra una sección o usa las flechas para moverla. El ojo la oculta sin
-        borrarla.
+        Drag a section or use the arrows to move it. The eye hides a section without deleting it.
       </p>
 
       <div className="toolbar-spacer" />
@@ -1119,13 +1117,13 @@ function LayoutBar({
       {error && <span className="dash-layout-error">{error}</span>}
 
       <button type="button" className="chip" onClick={onReset} disabled={isSaving || isDefault}>
-        Restaurar el orden original
+        Restore default order
       </button>
       <button type="button" className="chip" onClick={onCancel} disabled={isSaving}>
-        Cancelar
+        Cancel
       </button>
       <button type="button" className="btn-primary" onClick={onSave} disabled={isSaving}>
-        {isSaving ? "Guardando…" : "Guardar"}
+        {isSaving ? "Saving…" : "Save"}
       </button>
     </div>
   );
@@ -1384,9 +1382,9 @@ function PayersPanel({
   return (
     <div className="card dash-drilldown">
       <div className="card-head">
-        <h3>Quiénes pagaron en {monthName}</h3>
+        <h3>Customers who paid in {monthName}</h3>
         <button type="button" className="btn-ghost btn-small" onClick={onClose}>
-          Cerrar
+          Close
         </button>
       </div>
 
@@ -1394,8 +1392,8 @@ function PayersPanel({
         <table className="dash-table is-payers">
           <thead>
             <tr>
-              <th>Cliente</th>
-              <th>Pagos</th>
+              <th>Customer</th>
+              <th>Payments</th>
               <th className="col-money">Total</th>
             </tr>
           </thead>
@@ -1424,7 +1422,7 @@ function PayersPanel({
                         type="button"
                         className="dash-payment-row"
                         onClick={() => onOpenContract(row.contractId)}
-                        title={`Abrir ${row.contractCode}`}
+                        title={`Open ${row.contractCode}`}
                       >
                         <span className="code-badge">{row.lotCode}</span>
                         <span className="cell-sub">{shortDay(row.paidOn)}</span>
@@ -1447,9 +1445,9 @@ function PayersPanel({
           <tfoot>
             <tr>
               <th scope="row">
-                {pluralise(payers.length, "cliente", "clientes")}
+                {pluralise(payers.length, "customer", "customers")}
               </th>
-              <td>{pluralise(payments.length, "pago", "pagos")}</td>
+              <td>{pluralise(payments.length, "payment", "payments")}</td>
               <td className="col-money">
                 <span className="cell-money">{formatMoney(total, money)}</span>
               </td>
@@ -1480,9 +1478,9 @@ function SignedPanel({
   return (
     <div className="card dash-drilldown">
       <div className="card-head">
-        <h3>Contratos firmados en {monthName}</h3>
+        <h3>Contracts signed in {monthName}</h3>
         <button type="button" className="btn-ghost btn-small" onClick={onClose}>
-          Cerrar
+          Close
         </button>
       </div>
 
@@ -1490,10 +1488,10 @@ function SignedPanel({
         <table className="dash-table">
           <thead>
             <tr>
-              <th>Cliente</th>
-              <th>Lote</th>
-              <th>Firmado</th>
-              <th className="col-money">Valor</th>
+              <th>Customer</th>
+              <th>Lot</th>
+              <th>Signed</th>
+              <th className="col-money">Value</th>
             </tr>
           </thead>
           <tbody>
@@ -1522,7 +1520,7 @@ function SignedPanel({
                   <span className="cell-money">{formatMoney(row.salePriceCents, money)}</span>
                   {row.downPaymentCents > 0 && (
                     <span className="cell-sub">
-                      prima {formatMoney(row.downPaymentCents, money)}
+                      down payment {formatMoney(row.downPaymentCents, money)}
                     </span>
                   )}
                 </td>
@@ -1532,7 +1530,7 @@ function SignedPanel({
           <tfoot>
             <tr>
               <th scope="row" colSpan={3}>
-                {pluralise(signed.length, "contrato", "contratos")}
+                {pluralise(signed.length, "contract", "contracts")}
               </th>
               <td className="col-money">
                 <span className="cell-money">{formatMoney(total, money)}</span>
@@ -1566,7 +1564,7 @@ function Split({
       <p className="dash-split-title">{title}</p>
 
       {shown.length === 0 ? (
-        <p className="state-message">Sin movimientos.</p>
+        <p className="state-message">No activity.</p>
       ) : (
         <ul className="dash-split-list">
           {shown.map((row) => (
@@ -1606,11 +1604,11 @@ function ChangeLists({
     <div className="dash-changes">
       <div className="dash-change">
         <p className="dash-change-title">
-          <span className="stamp clay">Se atrasaron</span>
-          en {formatMonthName(month)}
+          <span className="stamp clay">Fell behind</span>
+          in {formatMonthName(month)}
         </p>
         {collections.slipped.length === 0 ? (
-          <p className="dash-change-empty">Nadie nuevo se atrasó.</p>
+          <p className="dash-change-empty">No one fell behind.</p>
         ) : (
           <ul className="dash-change-list">
             {collections.slipped.map((debtor) => (
@@ -1624,11 +1622,11 @@ function ChangeLists({
 
       <div className="dash-change">
         <p className="dash-change-title">
-          <span className="stamp success">Se pusieron al día</span>
-          en {formatMonthName(month)}
+          <span className="stamp success">Caught up</span>
+          in {formatMonthName(month)}
         </p>
         {collections.recovered.length === 0 ? (
-          <p className="dash-change-empty">Nadie salió del atraso.</p>
+          <p className="dash-change-empty">No one caught up.</p>
         ) : (
           <ul className="dash-change-list">
             {collections.recovered.map((debtor) => (

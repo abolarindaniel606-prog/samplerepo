@@ -108,7 +108,7 @@ export function useProofAttach({
       try {
         stored.push(await uploadAttachment(receiptId, proof.file, paymentId));
       } catch (caught) {
-        setError(caught instanceof Error ? caught.message : "No se pudo subir el comprobante.");
+        setError(caught instanceof Error ? caught.message : "Could not upload the payment proof.");
       }
 
       // The object URL is held only to validate the file and to name it;
@@ -139,7 +139,7 @@ export function useProofAttach({
     }
 
     setError(null);
-    setBusy("Abriendo Google Drive…");
+    setBusy("Opening Google Drive…");
 
     try {
       const { files, rejections } = await pickProofsFromDrive(setBusy);
@@ -150,7 +150,7 @@ export function useProofAttach({
         setError((shown) => shown ?? rejections[0]!);
       }
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "No se pudo abrir Google Drive.");
+      setError(caught instanceof Error ? caught.message : "Could not open Google Drive.");
     } finally {
       setBusy(null);
     }

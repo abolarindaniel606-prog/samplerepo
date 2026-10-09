@@ -20,10 +20,10 @@ export const MINIMUM_PASSWORD_LENGTH = 10;
  */
 export function describePasswordProblem(password: string, confirmation: string): string | null {
   if (password.length < MINIMUM_PASSWORD_LENGTH) {
-    return `La contraseña debe tener al menos ${MINIMUM_PASSWORD_LENGTH} caracteres.`;
+    return `Password must be at least ${MINIMUM_PASSWORD_LENGTH} characters.`;
   }
   if (password !== confirmation) {
-    return "Las dos contraseñas no coinciden.";
+    return "The passwords do not match.";
   }
 
   return null;
@@ -53,7 +53,7 @@ export function PasswordFields({
   return (
     <>
       <div className="form-field">
-        <label htmlFor={`${idPrefix}-password`}>Contraseña</label>
+        <label htmlFor={`${idPrefix}-password`}>Password</label>
         <input
           id={`${idPrefix}-password`}
           type="password"
@@ -67,7 +67,7 @@ export function PasswordFields({
         />
         {tooShort ? (
           <span className="field-error">
-            Faltan {MINIMUM_PASSWORD_LENGTH - password.length} caracteres.
+            {MINIMUM_PASSWORD_LENGTH - password.length} more characters required.
           </span>
         ) : (
           <span className="field-hint">{hint}</span>
@@ -75,7 +75,7 @@ export function PasswordFields({
       </div>
 
       <div className="form-field">
-        <label htmlFor={`${idPrefix}-confirmation`}>Repetir contraseña</label>
+        <label htmlFor={`${idPrefix}-confirmation`}>Confirm password</label>
         <input
           id={`${idPrefix}-confirmation`}
           type="password"
@@ -85,11 +85,10 @@ export function PasswordFields({
           onChange={(event) => onConfirmationChange(event.target.value)}
         />
         {mismatched ? (
-          <span className="field-error">No coincide con la de arriba.</span>
+          <span className="field-error">Does not match the password above.</span>
         ) : (
           <span className="field-hint">
-            Nadie puede leerla después, ni siquiera tú. Un error de tecleo aquí deja la cuenta
-            sin forma de entrar.
+            No one can read this later, not even you. A typo here could lock the account.
           </span>
         )}
       </div>
